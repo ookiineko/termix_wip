@@ -15,6 +15,7 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <assert.h>
 #include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -25,7 +26,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #elif defined(__linux__) || defined(__CYGWIN__)
-#include <unistd.h>
+#include <unistd.h>  // for sysconf
 #endif
 
 #include <gelf.h>
@@ -58,7 +59,7 @@
 #elif defined(__aarch64__)
 #define __EXPECTED_EMACH        (EM_AARCH64)
 #else
-#error Dont know some values on this architecture yet
+#error Dont know ELF machine value on this architecture yet
 #endif
 
 #ifdef TMIX_BIG_ENDIAN
@@ -67,7 +68,7 @@
 #define __EXPECTED_EIDATA       (ELFDATA2LSB)
 #endif
 
-#define ROUND_DOWN(_x, _align)   ((_x / _align) * _align)
+#define __ROUND_DOWN(_x, _align)   ((_x / _align) * _align)
 
 static ssize_t __pagesize = -1;
 
@@ -212,7 +213,7 @@ error:
                     memset(seg, 0, sizeof(tmixelf_seg));
 
                     size_t reminder = phdr.p_vaddr % phdr.p_align;
-                    size_t vaddr = ROUND_DOWN(phdr.p_vaddr, phdr.p_align);
+                    size_t vaddr = __ROUND_DOWN(phdr.p_vaddr, phdr.p_align);
 
                     if (first_seg_vaddr < 0) {
                         first_seg_vaddr = vaddr;
@@ -220,10 +221,13 @@ error:
                     } else
                         seg->off = vaddr - first_seg_vaddr;
 
+                    size_t filesize = phdr.p_filesz + reminder;
+                    size_t memsize = phdr.p_memsz + reminder;
+
                     if (phdr.p_filesz) {
                         // has file data
-                        seg->file.off = ROUND_DOWN(phdr.p_offset, phdr.p_align);
-                        seg->file.size = phdr.p_filesz + reminder;  // add reminder if needed
+                        seg->file.off = __ROUND_DOWN(phdr.p_offset, phdr.p_align);
+                        seg->file.size = filesize;  // add reminder if needed
 
                         if (phdr.p_memsz > phdr.p_filesz) {
                             // has extra zero paddings after file data
@@ -234,13 +238,16 @@ error:
 
                             size_t real_size = file_pages * phdr.p_align;
 
-                            seg->pad.off = real_size;
-                            seg->pad.size = phdr.p_memsz - real_size;
+                            if (real_size < memsize) {
+                                // actually need explicit zero padding
+                                seg->pad.off = real_size;
+                                seg->pad.size = memsize - real_size;
+                            }
                         }
                     } else {
                         // zeros only
                         seg->pad.off = 0;
-                        seg->pad.size = phdr.p_memsz + reminder;  // add reminder to here since no file data
+                        seg->pad.size = memsize;  // add reminder to here since no file data
                     }
 
                     seg->flags = __conv_flags(phdr.p_flags);
@@ -282,7 +289,7 @@ error:
 
                     size_t reminder = phdr.p_vaddr % __pagesize;
 
-                    relro->off = ROUND_DOWN(phdr.p_vaddr, __pagesize);
+                    relro->off = __ROUND_DOWN(phdr.p_vaddr, __pagesize);
                     relro->size = phdr.p_memsz + reminder;
 
                     break;
@@ -312,6 +319,7 @@ error:
                     break;
                 }
                 case PT_GNU_STACK: {
+                    assert(!execstack);
                     execstack = __conv_flags(phdr.p_flags) & TMIXELF_SEG_EXEC;
                     break;
                 }
