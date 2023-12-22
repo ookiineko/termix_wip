@@ -9,7 +9,7 @@ Termix - *Mix it with Linux terminal*
 Termix is yet another compatibility layer and distribution for running a Linux environment on non-Linux platforms,
 currently mainly targeting at the Microsoft Windows.
 
-Termux is not an emulator, it directly loads and executes the program natively on supported machines, and in some conditions,
+Termix is not an emulator, it directly loads and executes the program natively on supported machines, and in some conditions,
 it also require recompiling the programs (see [Windows limitation](#windows-limitation)) to work.
 
 ## Project status
