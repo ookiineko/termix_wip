@@ -15,10 +15,12 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include <libgen.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -34,12 +36,19 @@ char *___tmix_progdir = NULL;
 static char __progdir_buff[PATH_MAX + 1];
 
 char *_tmix_join_path(const char *a, const char *b) {
-    char *buff = malloc(PATH_MAX + 1);
+    size_t newlen = strlen(a) + 1 + strlen(b);
+
+    if (newlen > PATH_MAX) {
+        errno = ENAMETOOLONG;
+        return NULL;
+    }
+
+    char *buff = malloc(newlen + 1);
 
     if (!buff)
         return NULL;
 
-    snprintf(buff, PATH_MAX + 1, "%s/%s", a, b);
+    snprintf(buff, newlen + 1, "%s/%s", a, b);
 
     return buff;
 }

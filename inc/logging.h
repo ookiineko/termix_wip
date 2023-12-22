@@ -1,5 +1,5 @@
 /*
-  fixme.h - Fixme helpers
+  logging.h - Logging helpers
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -15,9 +15,11 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TERMIX_COMMON_INCLUDE_FIXME_H
-#define TERMIX_COMMON_INCLUDE_FIXME_H
+#ifndef TERMIX_COMMON_INCLUDE_LOGGING_H
+#define TERMIX_COMMON_INCLUDE_LOGGING_H
 
-__attribute__((format(printf, 1, 2))) void tmix_fixme(const char *fmt, ...);
+#include <stdio.h>
 
-#endif /* TERMIX_COMMON_INCLUDE_FIXME_H */
+#define tmix_fixme(_fmt, ...)     fprintf(stderr, "fixme: " _fmt "\n", __VA_ARGS__)
+
+#endif /* TERMIX_COMMON_INCLUDE_LOGGING_H */

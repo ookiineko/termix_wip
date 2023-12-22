@@ -30,8 +30,8 @@
 
 #include <gelf.h>
 
+#include "../../inc/logging.h"
 #include "../../inc/platform.h"
-#include "../../inc/fixme.h"
 
 #include "elf.h"
 
@@ -123,7 +123,10 @@ invalid_elf:
     if (hdr.e_ident[EI_VERSION] != EV_CURRENT)
         goto invalid_elf;
 
-    if (hdr.e_ident[EI_OSABI] != ELFOSABI_SYSV)
+    unsigned char osabi = hdr.e_ident[EI_OSABI];
+
+    if (osabi != ELFOSABI_SYSV &&
+        osabi != ELFOSABI_GNU)
         goto invalid_elf;
 
     if (hdr.e_ident[EI_ABIVERSION] != 0)
