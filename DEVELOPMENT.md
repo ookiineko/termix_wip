@@ -1,6 +1,6 @@
 ## Running
 
-To load and run an ELF binary, use `tmixldr` with the path to the target ELF program passed to it:
+To load and run an ELF binary, use `tmixldr` and pass the path to the target ELF program to it:
 
 ```shell
 tmixldr path/to/file
@@ -11,4 +11,4 @@ tmixldr path/to/file
 > because everything is running natively with Termix, trying to run ELF files in a different architecture
 > will cause an error.
 
-To print debug information, pass `-d` to `timrldr`.
+To also print out debug information, pass `-d` to `timrldr`.
