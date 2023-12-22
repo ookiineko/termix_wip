@@ -2,12 +2,12 @@ Termix - *Mix it with Linux terminal*
 ==================================
 
 > *Warning*
-> This a toy project and it's in early development.
+> This is a toy project and it's in early development.
 >
 > For documentation, view the [development page](DEVELOPMENT.md).
 
 Termix is yet another compatibility layer and distribution for running a Linux environment on non-Linux platforms,
-currently mainly targeting at Microsoft Windows.
+currently mainly targeting at the Microsoft Windows.
 
 Termux is not an emulator, it directly loads and executes the program natively on supported machines, and in some conditions,
 it also require recompiling the programs (see [Windows limitation](#windows-limitation)) to work.
@@ -22,7 +22,7 @@ it also require recompiling the programs (see [Windows limitation](#windows-limi
     - [ ] dynamic relocation
     - [ ] setup stack
 
-- [ ] get a basic helloworld to run for Windows
+- [ ] get a basic helloworld to run on Windows
 
 #### Long-term
 
@@ -43,7 +43,7 @@ it also require recompiling the programs (see [Windows limitation](#windows-limi
 Currently on Windows, mapping file data to a page size aligned address is not easy and sometimes nearly impossible.
 
 It's probably because of Windows's forward-compatibility decisions, the ability to create file mappings on page size boundary is
-never publicly exposed as a public API and it's not even visible to native APIs on anything other than 32-bit x86 machines.
+never exposed as a public API and it's not even visible to native APIs on anything other than 32-bit x86 machines.
 
 However, Termix's ELF loader depends on this feature to work.
 
