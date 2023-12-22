@@ -159,9 +159,7 @@ invalid_elf:
         ssize_t first_seg_vaddr = -1;
         ssize_t highest_addr = -1;
         tmixelf_seg *si = NULL;  // array
-        char *interp = NULL;
         bool execstack = false;
-        char *rpath = NULL;
         int relro_count = 0;
         tmix_chunk *relros = NULL;  // array
 
@@ -295,27 +293,7 @@ error:
                     break;
                 }
                 case PT_INTERP: {
-                    off_t old_fptr = lseek(fd, 0, SEEK_CUR);
-
-                    if (old_fptr < 0)
-                        goto error;
-
-                    if (lseek(fd, phdr.p_offset, SEEK_SET) < 0)
-                        goto error;
-
-                    interp = malloc(phdr.p_filesz);
-
-                    if (!interp)
-                        goto error;
-
-                    if (read(fd, interp, phdr.p_filesz) != phdr.p_filesz) {
-                        errno = EIO;
-                        goto error;
-                    }
-
-                    if (lseek(fd, old_fptr, SEEK_SET) < 0)
-                        goto error;
-
+                    // path to dynamic linker, ignored
                     break;
                 }
                 case PT_GNU_STACK: {
@@ -353,14 +331,8 @@ error:
             }
         }
 
-        if (interp)
-            ei->interp = interp;  // interpreter path is found
-
         if (execstack)
             ei->execstack = execstack;
-
-        if (rpath)
-            ei->rpath = rpath;  // runtime path is found
     }
 
     return 0;
@@ -399,16 +371,6 @@ void tmixldr_free_elfinfo(tmixelf_info *ei) {
         free(ei->relro.data);
 
         ei->relro.data = NULL;
-    }
-
-    if (ei->interp) {
-        free(ei->interp);
-        ei->interp = NULL;
-    }
-
-    if (ei->rpath) {
-        free(ei->rpath);
-        ei->rpath = NULL;
     }
 }
 

@@ -41,13 +41,7 @@ void tmixldr_print_elfinfo(const tmixelf_info *ei) {
 
     printf("total size in memory when loaded: 0x%lx\n", ei->mem_size);
 
-    if (ei->interp)
-        printf("dynamic interpreter: %s\n", ei->interp);
-
     printf("stack executable: %s\n", ei->execstack ? "yes" : "no");
-
-    if (ei->rpath)
-        printf("runtime path: %s\n", ei->rpath);
 
     printf("relro segment count: %ld\n", ei->relro.size);
 
