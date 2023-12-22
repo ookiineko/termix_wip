@@ -2,7 +2,7 @@ Termix - *Mix it with Linux terminal*
 ==================================
 
 > *Warning*
-> This is a toy project and it's in early development.
+> This is a toy project and it's under early development.
 >
 > For documentation, view the [development page](DEVELOPMENT.md).
 
