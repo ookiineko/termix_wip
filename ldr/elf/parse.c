@@ -110,43 +110,43 @@ read_failed:
     // basic checking
 
     if (memcmp(hdr.e_ident, ELFMAG, SELFMAG)) {
-invalid_elf:
+bad_elf:
         errno = EBADF;
         return -1;
     }
 
     if (hdr.e_ident[EI_CLASS] != __EXPECTED_EICLASS)
-        goto invalid_elf;
+        goto bad_elf;
 
     if (hdr.e_ident[EI_DATA] != __EXPECTED_EIDATA)
-        goto invalid_elf;
+        goto bad_elf;
 
     if (hdr.e_ident[EI_VERSION] != EV_CURRENT)
-        goto invalid_elf;
+        goto bad_elf;
 
     unsigned char osabi = hdr.e_ident[EI_OSABI];
 
     if (osabi != ELFOSABI_SYSV &&
         osabi != ELFOSABI_GNU)
-        goto invalid_elf;
+        goto bad_elf;
 
     if (hdr.e_ident[EI_ABIVERSION] != 0)
-        goto invalid_elf;
+        goto bad_elf;
 
     if (hdr.e_type != ET_DYN)
-        goto invalid_elf;
+        goto bad_elf;
 
     if (hdr.e_machine != __EXPECTED_EMACH)
-        goto invalid_elf;
+        goto bad_elf;
 
     if (hdr.e_version != EV_CURRENT)
-        goto invalid_elf;
+        goto bad_elf;
 
     if (hdr.e_ehsize != sizeof(__EHDR_TYPE))
-        goto invalid_elf;
+        goto bad_elf;
 
     if (hdr.e_phentsize != sizeof(__PHDR_TYPE))
-        goto invalid_elf;
+        goto bad_elf;
 
     // parse segments
 
