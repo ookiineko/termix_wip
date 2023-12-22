@@ -10,7 +10,7 @@ Termix is yet another compatibility layer and distribution for running a Linux e
 currently mainly targeting at the Microsoft Windows.
 
 Termix is not an emulator, it directly loads and executes the program natively on supported machines, and in some conditions,
-it also require recompiling the programs (see [Windows limitation](#windows-limitation)) to work.
+it also require recompiling the programs (see the [Windows limitation](#windows-limitation)) to work.
 
 ## Project status
 
