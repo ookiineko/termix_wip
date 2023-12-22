@@ -1,7 +1,7 @@
 pkg_search_module(REQUIRED libelf)
 
 add_executable(tmixldr
-    dyld.c
+    dynld.c
     elf/debug.c
     elf/parse.c
     load.c

@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "dyld.h"
+#include "dynld.h"
 #include "elf/elf.h"
 #include "load.h"
 
@@ -105,7 +105,7 @@ usage_and_exit:
         goto exit;
     }
 
-    if (tmixdyld_reloc_elf(__e.base, &__ei) < 0) {
+    if (tmixdynld_reloc_elf(__e.base, &__ei) < 0) {
         perror("error relocating ELF");
 
         goto exit;

@@ -1,5 +1,5 @@
 /*
-  dyld.h - Dynamic linking editor
+  dynld.h - Dynamic linker
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -28,6 +28,6 @@
  *
  * NOTE: the behavior calling this function more than once on the same loaded image is undefined
  */
-int tmixdyld_reloc_elf(void *base, const tmixelf_info *ei);
+int tmixdynld_reloc_elf(void *base, const tmixelf_info *ei);
 
 #endif /* TERMIX_LOADER_DYNAMIC_LINKER_H */

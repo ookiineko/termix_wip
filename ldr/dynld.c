@@ -1,5 +1,5 @@
 /*
-  dyld.c - Dynamic linking editor
+  dynld.c - Dynamic linker
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,14 +26,14 @@
 #include "../inc/paths.h"
 
 #include "elf/elf.h"
-#include "dyld.h"
+#include "dynld.h"
 
 // FIXME: Set to libc path
 #define _HOSTLIB_PATH               "../share/termix/tests/tmixhostlib.dll"
 
 static void *__hostlib = NULL;
 
-int tmixdyld_reloc_elf(void *base, const tmixelf_info *ei) {
+int tmixdynld_reloc_elf(void *base, const tmixelf_info *ei) {
     if (!__hostlib) {
         // dylib handle was failed to open
         errno = EAGAIN;

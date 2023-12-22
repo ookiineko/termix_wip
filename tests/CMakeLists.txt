@@ -13,7 +13,7 @@ if (LINUX)
         -nostdlib
         -Wl,-rpath=$ORIGIN)
 
-    # for early tests w/o dyld
+    # for early tests w/o dynamic linker
     add_executable(hello_bare
         lib/hello_bare.c
         hello_main.c)
