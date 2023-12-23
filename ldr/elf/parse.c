@@ -40,11 +40,13 @@
 #define __EXPECTED_EICLASS      (ELFCLASS32)
 #define __EHDR_TYPE             Elf32_Ehdr
 #define __PHDR_TYPE             Elf32_Phdr
+#define __ELFDYN_TYPE           Elf32_Dyn
 #define __ELFWORD_TYPE          Elf32_Word
 #elif defined(TMIX64)
 #define __EXPECTED_EICLASS      (ELFCLASS64)
 #define __EHDR_TYPE             Elf64_Ehdr
 #define __PHDR_TYPE             Elf64_Phdr
+#define __ELFDYN_TYPE           Elf64_Dyn
 #define __ELFWORD_TYPE          Elf64_Word
 #else
 #error Dont know ELF types on this platform yet
@@ -267,7 +269,42 @@ error:
                     break;
                 }
                 case PT_DYNAMIC: {
-                    // TODO
+                    // temporarily seek to table
+
+                    off_t old_pos = lseek(fd, 0, SEEK_CUR);
+
+                    if (old_pos < 0)
+                        goto error;
+
+                    if (lseek(fd, phdr.p_offset, SEEK_SET) < 0)
+                        goto error;
+
+                    // iterate through all entries
+
+                    __ELFDYN_TYPE dyn;
+
+                    for (;;) {
+                        if (read(fd, &dyn, sizeof(__ELFDYN_TYPE)) != sizeof(__ELFDYN_TYPE))
+                            goto error;
+
+                        switch (dyn.d_tag) {
+                            case DT_NULL:
+                                // end of array, ignored
+                                break;
+                            default:
+                                tmix_fixme("unhandled dynamic tag 0x%lx", dyn.d_tag);
+                                break;
+                        }
+
+                        if (dyn.d_tag == DT_NULL)
+                            break;
+                    }
+
+                    // restore file position before reading the next header
+
+                    if (lseek(fd, old_pos, SEEK_SET) < 0)
+                        goto error;
+
                     break;
                 }
                 case PT_GNU_RELRO: {

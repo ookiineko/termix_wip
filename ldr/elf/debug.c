@@ -45,7 +45,7 @@ void tmixldr_print_elfinfo(const tmixelf_info *ei) {
 
     printf("loadable segment count: %ld\n", ei->seg.size);
 
-    printf("post-reloc ro segment count: %ld\n", ei->relro.size);
+    printf("post-reloc RO segment count: %ld\n", ei->relro.size);
 
     int i, j;
 
