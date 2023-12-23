@@ -28,6 +28,6 @@
  *
  * NOTE: the behavior calling this function more than once on the same loaded image is undefined
  */
-int tmixdynld_reloc_elf(void *base, const tmixelf_info *ei);
+int tmixdynld_handle_elf(void *base, const tmixelf_info *ei);
 
 #endif /* TERMIX_LOADER_DYNAMIC_LINKER_H */

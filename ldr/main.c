@@ -105,8 +105,8 @@ usage_and_exit:
         goto exit;
     }
 
-    if (tmixdynld_reloc_elf(__e.base, &__ei) < 0) {
-        perror("error relocating ELF");
+    if (tmixdynld_handle_elf(__e.base, &__ei) < 0) {
+        perror("error linking ELF");
 
         goto exit;
     }

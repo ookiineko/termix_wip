@@ -33,7 +33,7 @@
 
 static void *__hostlib = NULL;
 
-int tmixdynld_reloc_elf(void *base, const tmixelf_info *ei) {
+int tmixdynld_handle_elf(void *base, const tmixelf_info *ei) {
     if (!__hostlib) {
         // dylib handle was failed to open
         errno = EAGAIN;
@@ -46,7 +46,7 @@ int tmixdynld_reloc_elf(void *base, const tmixelf_info *ei) {
         // TODO
     }
 
-    if (ei->reloc.size) {
+    if (ei->relro.size) {
         int i;
         tmix_chunk *relros = ei->relro.data;  // array
 
