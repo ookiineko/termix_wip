@@ -298,7 +298,7 @@ error:
                 }
                 case PT_GNU_STACK: {
                     assert(!execstack);
-                    execstack = __conv_flags(phdr.p_flags) & TMIXELF_SEG_EXEC;
+                    execstack = !!(__conv_flags(phdr.p_flags) & TMIXELF_SEG_EXEC);
                     break;
                 }
                 case PT_NOTE: {

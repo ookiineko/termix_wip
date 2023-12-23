@@ -43,18 +43,24 @@ void tmixldr_print_elfinfo(const tmixelf_info *ei) {
 
     printf("stack executable: %s\n", ei->execstack ? "yes" : "no");
 
-    printf("relro segment count: %ld\n", ei->relro.size);
-
     printf("loadable segment count: %ld\n", ei->seg.size);
 
-    tmix_chunk *relros = ei->relro.data;
-
-    if (ei->relro.size)
-        assert(relros);
+    printf("post-reloc ro segment count: %ld\n", ei->relro.size);
 
     int i, j;
 
     if (ei->seg.size) {
+        if (ei->relro.size) {
+            tmix_chunk *relros = ei->relro.data;
+
+            assert(relros);
+
+            for (i = 0; i < ei->relro.size; i++) {
+                printf("relro segment #%d:\n", i);
+                printf("  range: " __PTRFMT " to " __PTRFMT "\n", relros[i].off, relros[i].off + relros[i].size);
+            }
+        }
+
         tmixelf_seg *si = ei->seg.data;
 
         assert(si);
@@ -66,32 +72,6 @@ void tmixldr_print_elfinfo(const tmixelf_info *ei) {
                 printf("  file data size: " __PTRFMT " (at file offset " __PTRFMT ")\n", si[i].file.size, si[i].file.off);
             if (si[i].pad.size)
                 printf("  zero padding size: " __PTRFMT " (relative offset " __PTRFMT ")\n", si[i].pad.size, si[i].pad.off);
-
-            size_t max_addr = si[i].off;
-
-            if (si[i].file.size) {
-                if (si[i].pad.size)
-                    max_addr += si[i].pad.off + si[i].pad.size;
-                else
-                    max_addr += si[i].file.size;
-            } else
-                max_addr += si[i].pad.size;
-
-            bool relro = false;
-
-            for (j = 0; j < ei->relro.size; j++) {
-                size_t relro_end = relros[j].off + relros[j].size;
-
-                if (si[i].off <= relros[j].off &&
-                        relros[j].off < max_addr &&
-                        relro_end <= max_addr &&
-                        si[i].off < relro_end) {
-                    relro = true;
-                    break;
-                }
-            }
-
-            printf("  set to read-only after relocation: %s\n", relro ? "yes" : "no");
 
             if (si[i].flags) {
                 printf("  flags: ");
