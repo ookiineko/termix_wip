@@ -2,7 +2,7 @@ Termix - *Mix it with Linux terminal*
 ==================================
 
 > *Warning*
-> This is a toy project and it's under early development.
+> This is a learning project, nothing useful yet.
 >
 > For documentation, view the [development page](DEVELOPMENT.md).
 
@@ -20,6 +20,7 @@ it also require recompiling the programs (see the [Windows limitation](#windows-
 
 - [ ] basic ELF loader
     - [ ] dynamic relocation
+      - [ ] non-lazy relocation (`LD_BIND_NOW`)
     - [ ] setup stack
 
 - [ ] get a basic helloworld to run on Windows
