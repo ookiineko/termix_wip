@@ -58,6 +58,11 @@ int tmixldr_load_elf(int fd, const tmixelf_info *ei, tmixldr_elf *e) {
     if (base == MAP_FAILED)
         return -1;
 
+#if defined(_WIN32) || defined(__CYGWIN__)
+    // XXX: Windows doesn't support overlapped memory mapping?
+    munmap(base, ei->mem_size);
+#endif
+
     // setup segments
 
     tmixelf_seg *si = ei->seg.data;  // array
