@@ -53,7 +53,7 @@ char *_tmix_join_path(const char *a, const char *b) {
     return buff;
 }
 
-__attribute__((constructor)) void __init_progdir(void) {
+__attribute__((constructor)) static void __init_progdir(void) {
 #ifdef _WIN32
     if (!GetModuleFileName(NULL, __progdir_buff, sizeof(__progdir_buff))) {
         // TODO: use FormatMessage to print human readable error message

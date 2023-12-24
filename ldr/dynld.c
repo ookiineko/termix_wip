@@ -16,8 +16,8 @@
  */
 
 #include <assert.h>
-#include <errno.h>
 #include <dlfcn.h>
+#include <errno.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,6 +26,7 @@
 #include "../inc/paths.h"
 
 #include "elf/elf.h"
+
 #include "dynld.h"
 
 // FIXME: Set to libc path
@@ -61,7 +62,7 @@ int tmixdynld_handle_elf(void *base, const tmixelf_info *ei) {
     return 0;
 }
 
-__attribute__((constructor)) void __init_hostlib(void) {
+__attribute__((constructor)) static void __init_hostlib(void) {
     if (!_tmix_progdir)
         return;  // sth went wrong at startup
 
@@ -88,7 +89,7 @@ __attribute__((constructor)) void __init_hostlib(void) {
     free(hostlib_path);
 }
 
-__attribute__((destructor)) void __destroy_hostlib(void) {
+__attribute__((destructor)) static void __destroy_hostlib(void) {
     if (__hostlib) {
         dlclose(__hostlib);
         __hostlib = NULL;
