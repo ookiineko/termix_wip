@@ -80,7 +80,7 @@ __attribute__((constructor)) void __init_hostlib(void) {
         const char *err = dlerror();
 
         if (err)
-            fprintf(stderr, "%s\n", err);
+            fprintf(stderr, "error while opening shared library: %s\n", err);
         else
             fprintf(stderr, "unknown error while opening shared library %s\n", hostlib_path);  // how
     }
