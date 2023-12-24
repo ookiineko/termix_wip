@@ -1,4 +1,4 @@
-pkg_search_module(REQUIRED libelf)
+pkg_search_module(libelf REQUIRED libelf)
 
 add_executable(tmixldr
     dynld.c
