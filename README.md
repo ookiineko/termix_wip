@@ -43,6 +43,10 @@ Another highlight is support for using native Windows APIs alongside with Linux 
 
 ## Known issues
 
+### ABI differences
+
+Some potential ABI differences between Linux and Windows may cause all kinds of low-level difficulties or major issues for some features to be implemented and work with Termix (some of them may **NEVER** be possible to be workarounded or implemented), while workarounds might be possbile for some of them, it can hurt performance and make Termix runs slower and less efficient.
+
 ### Windows limitation
 
 Currently on Windows, mapping file data to a page size aligned address is not easy and sometimes nearly impossible.
