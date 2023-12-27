@@ -41,13 +41,23 @@
 #define __EHDR_TYPE             Elf32_Ehdr
 #define __PHDR_TYPE             Elf32_Phdr
 #define __ELFDYN_TYPE           Elf32_Dyn
+#define __ELFSYM_TYPE           Elf32_Sym
 #define __ELFWORD_TYPE          Elf32_Word
+
+#define __ELF_ST_BIND           ELF32_ST_BIND
+#define __ELF_ST_TYPE           ELF32_ST_TYPE
+#define __ELF_ST_VIS            ELF32_ST_VISIBILITY
 #elif defined(TMIX64)
 #define __EXPECTED_EICLASS      (ELFCLASS64)
 #define __EHDR_TYPE             Elf64_Ehdr
 #define __PHDR_TYPE             Elf64_Phdr
 #define __ELFDYN_TYPE           Elf64_Dyn
+#define __ELFSYM_TYPE           Elf64_Sym
 #define __ELFWORD_TYPE          Elf64_Word
+
+#define __ELF_ST_BIND           ELF64_ST_BIND
+#define __ELF_ST_TYPE           ELF64_ST_TYPE
+#define __ELF_ST_VIS            ELF64_ST_VISIBILITY
 #else
 #error Dont know ELF types on this platform yet
 #endif
@@ -283,6 +293,11 @@ error:
 
                     __ELFDYN_TYPE dyn;
 
+                    ssize_t strtab_off = -1;
+                    ssize_t strtab_size = -1;
+                    ssize_t symtab_off = -1;
+                    ssize_t got_off = -1;
+
                     for (;;) {
                         if (read(fd, &dyn, sizeof(__ELFDYN_TYPE)) != sizeof(__ELFDYN_TYPE))
                             goto error;
@@ -290,6 +305,52 @@ error:
                         switch (dyn.d_tag) {
                             case DT_NULL:
                                 // end of array, ignored
+                                break;
+                            case DT_NEEDED:
+                                // TODO: put this info into actual use when needed
+                                break;
+                            case DT_RUNPATH:
+                                // rpath, currently unused by us
+                                break;
+                            case DT_GNU_HASH:
+                                // TODO: put this info into actual use when needed
+                                break;
+                            case DT_STRTAB:
+                                strtab_off = dyn.d_un.d_ptr;
+                                break;
+                            case DT_STRSZ:
+                                strtab_size = dyn.d_un.d_val;
+                                break;
+                            case DT_SYMENT:
+                                assert(dyn.d_un.d_val == sizeof(__ELFSYM_TYPE));
+                                break;
+                            case DT_SYMTAB:
+                                strtab_off = dyn.d_un.d_ptr;
+                                break;
+                            case DT_PLTGOT:
+                                got_off = dyn.d_un.d_ptr;
+                                break;
+                            case DT_PLTRELSZ:
+                                // TODO: is this needed?
+                                break;
+                            case DT_PLTREL:
+                                // TODO: is this needed?
+                                break;
+                            case DT_JMPREL:
+                                // lazy binding is not implemented, ignored
+                                break;
+                            case DT_FLAGS_1:
+                                switch (dyn.d_un.d_val) {
+                                    case DF_1_PIE:
+                                        // already know, ignored
+                                        break;
+                                    default:
+                                        tmix_fixme("unhandled state flag 0x%lx", dyn.d_un.d_val);
+                                        break;
+                                }
+                                break;
+                            case DT_DEBUG:
+                                // placeholder for debug info? ignored
                                 break;
                             default:
                                 tmix_fixme("unhandled dynamic tag 0x%lx", dyn.d_tag);
@@ -299,6 +360,8 @@ error:
                         if (dyn.d_tag == DT_NULL)
                             break;
                     }
+
+                    // TODO: iterate through symbol table
 
                     // restore file position before reading the next header
 
