@@ -19,8 +19,7 @@ it also require recompiling the programs (see the [Windows limitation](#windows-
 #### Milestones
 
 - [ ] basic ELF loader
-    - [ ] dynamic relocation
-      - [ ] non-lazy relocation (`LD_BIND_NOW`)
+    - [ ] dynamic relocation (WIP)
     - [ ] setup stack
 
 - [ ] get a basic helloworld to run on Windows
