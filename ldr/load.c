@@ -59,7 +59,7 @@ int tmixldr_load_elf(int fd, const tmixelf_info *ei, tmixldr_elf *e) {
         return -1;
 
 #if defined(_WIN32) || defined(__CYGWIN__)
-    // XXX: Windows doesn't support overlapped memory mapping?
+    // Unlike Linux, NT kernel doesn't seems to support overlapped memory mappings
     munmap(base, ei->mem_size);
 #endif
 
