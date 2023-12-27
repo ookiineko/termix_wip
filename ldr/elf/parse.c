@@ -164,8 +164,8 @@ bad_elf:
 
     __PHDR_TYPE *phdrs = NULL;  // array
 
-    tmixelf_seg *si = NULL;  // array
-    tmix_chunk *relros = NULL;  // array
+    tmixelf_seg *si = NULL;  // array, optional
+    tmix_chunk *relros = NULL;  // array, optional
 
     if (hdr.e_phoff && hdr.e_phnum) {
         // read all segment headers
@@ -190,9 +190,10 @@ error:
 
         // now we will iterate through all segments
 
-        int i;
+        int i;  // current semgent index
 
-        const __PHDR_TYPE *phdr = NULL;  // current segment header in loop
+        const __PHDR_TYPE *phdr = NULL;  // current segment header
+                                         // set this at the beginning in loops
 
         // but first calculate the required size for arrays
 
@@ -430,11 +431,11 @@ error:
             } /* switch (phdr->p_type) */
         } /* for (i = 0; i < hdr.e_phnum; i++) */
 
-        // resize array to actual sizes if needed
-
-        void *ptr;
+        // actual size of segment info array can be smaller, resize if needed
 
         if (j < load_seg_cnt) {
+            void *ptr;
+
             if (!(ptr = reallocarray(si, j, sizeof(tmixelf_seg))))
                 goto error;  // idk know how could shrinking an array fail anyway
             si = ptr;
@@ -450,7 +451,7 @@ error:
             // at least one loadable segment is found
 
             ei->seg.data = si;
-            ei->seg.size = load_seg_cnt;
+            ei->seg.size = j;
 
             ei->mem_size = highest_addr;
 
