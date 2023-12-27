@@ -4,7 +4,7 @@ add_library(hostlib SHARED
     lib/hello.c)
 
 install(TARGETS hostlib
-        RUNTIME DESTINATION ${TMIXTEST_INSTALL_DATADIR})
+        LIBRARY DESTINATION ${TMIXTEST_INSTALL_DATADIR})
 
 # test ELFs compiled on Linux
 if (LINUX)
@@ -24,5 +24,5 @@ if (LINUX)
         -nostdlib)
 
     install(TARGETS hello_bare hello_standalone
-            LIBRARY DESTINATION ${TMIXTEST_INSTALL_DATADIR})
+            RUNTIME DESTINATION ${TMIXTEST_INSTALL_DATADIR})
 endif()
