@@ -11,4 +11,4 @@ tmixldr path/to/file
 > because everything is running natively with Termix, trying to run ELF files in a different architecture
 > will cause an error.
 
-To also print out debug information, pass `-d` to `timrldr`.
+To also print out debug information, pass `-d` to `timxldr`.

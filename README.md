@@ -3,8 +3,6 @@ Termix - *Mix it with Linux terminal*
 
 > *Warning*
 > This is just my personal learning project, now under ***VERY VERY*** early proof-of-concept stage, so please don't expect anything useful yet.
->
-> For documentation, view the [development page](DEVELOPMENT.md).
 
 Termix aims to be yet another compatibility layer and distribution for running a Linux environment on non-Linux platforms,
 currently mainly targeting at the Microsoft Windows.
@@ -40,6 +38,10 @@ Another highlight is support for using native Windows APIs alongside with Linux 
 #### Need help
 
 * ARM/ARM64 support (lacking of device to test)
+
+## Usage
+
+See the [manual](MANUAL.md) (currently available in MarkDown).
 
 ## Known issues
 
