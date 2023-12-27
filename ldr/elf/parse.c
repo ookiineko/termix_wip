@@ -162,38 +162,83 @@ bad_elf:
 
     // parse segments
 
+    __PHDR_TYPE *phdrs = NULL;  // array
+
+    tmixelf_seg *si = NULL;  // array
+    tmix_chunk *relros = NULL;  // array
+
     if (hdr.e_phoff && hdr.e_phnum) {
+        // read all segment headers
+
         if (lseek(fd, hdr.e_phoff, SEEK_SET) < 0)
             return -1;
 
-        __PHDR_TYPE *phdrs = malloc(sizeof(__PHDR_TYPE) * hdr.e_phnum);
-
-        if (!phdrs)
+        if (!(phdrs = calloc(hdr.e_phnum, sizeof(__PHDR_TYPE))))
             return -1;
 
         if (read(fd, phdrs, sizeof(__PHDR_TYPE) * hdr.e_phnum) != (sizeof(__PHDR_TYPE) * hdr.e_phnum)) {
+            errno = EIO;
+error:
             free(phdrs);
-            goto read_failed;
+
+            if (si)
+                free(si);
+
+            if (relros)
+                free(relros);
         }
 
-        int i, j = 0;
-        ssize_t first_seg_vaddr = -1;
-        ssize_t highest_addr = -1;
-        tmixelf_seg *si = NULL;  // array
-        bool execstack = false;
-        int relro_count = 0;
-        tmix_chunk *relros = NULL;  // array
+        // now we will iterate through all segments
 
-        // iterate through all segments
+        int i;
+
+        const __PHDR_TYPE *phdr = NULL;  // current segment header in loop
+
+        // but first calculate the required size for arrays
+
+        size_t load_seg_cnt = 0;
+        size_t relro_seg_cnt = 0;
 
         for (i = 0; i < hdr.e_phnum; i++) {
-            const __PHDR_TYPE *phdr = &phdrs[i];
+            phdr = &phdrs[i];
+
+            switch (phdr->p_type) {
+                case PT_LOAD:
+                    load_seg_cnt++;
+                    break;
+                case PT_GNU_RELRO:
+                    relro_seg_cnt++;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if (load_seg_cnt &&
+            !(si = calloc(load_seg_cnt, sizeof(tmixelf_seg))))
+            goto error;
+
+        if (relro_seg_cnt &&
+            !(relros = calloc(relro_seg_cnt, sizeof(tmix_chunk))))
+            goto error;
+
+        // ok, now it's ready to go
+
+        int j = 0;  // current load segment index
+        int k = 0;  // current relro segment index
+        ssize_t first_seg_vaddr = -1;
+        ssize_t highest_addr = -1;
+        bool execstack = false;
+
+        for (i = 0; i < hdr.e_phnum; i++) {
+            phdr = &phdrs[i];
 
             switch (phdr->p_type) {
                 case PT_PHDR: {
                     // the program header table itself, skipping
                     break;
                 }
+
                 case PT_LOAD: {
                     if (!phdr->p_memsz)
                         continue;  // wat
@@ -203,29 +248,12 @@ bad_elf:
                     if ((phdr->p_align % __pagesize) != 0 ||
                         ((phdr->p_vaddr - phdr->p_offset) % phdr->p_align) != 0) {
                         errno = EBADF;
-error:
-                        free(phdrs);
-
-                        if (si)
-                            free(si);
-
-                        if (relros)
-                            free(relros);
-
-                        return -1;
-                    }
-
-                    // resize buffer
-                    void *ptr;
-
-                    j++;
-                    if (!(ptr = reallocarray(si, j, sizeof(tmixelf_seg))))
                         goto error;
-                    si = ptr;
+                    }
 
                     // populate segment information
 
-                    tmixelf_seg *seg = &si[j - 1];  // current segment
+                    tmixelf_seg *seg = &si[j++];  // current segment
                     memset(seg, 0, sizeof(tmixelf_seg));
 
                     size_t reminder = phdr->p_vaddr % phdr->p_align;
@@ -283,7 +311,8 @@ error:
                         highest_addr = end;
 
                     break;
-                }
+                } /* case PT_LOAD */
+
                 case PT_DYNAMIC: {
                     if (lseek(fd, phdr->p_offset, SEEK_SET) < 0)
                         goto error;
@@ -349,35 +378,26 @@ error:
                                 }
                                 break;
                             case DT_DEBUG:
-                                // placeholder for debug info? ignored
+                                // placeholder for runtime debug info, ignored
                                 break;
                             default:
                                 tmix_fixme("unhandled dynamic tag 0x%lx", dyn.d_tag);
                                 break;
-                        }
+                        } /* switch (dyn.d_tag) */
 
                         if (dyn.d_tag == DT_NULL)
                             break;
-                    }
+                    } /* for (;;) */
 
                     // TODO: iterate through symbol table
 
                     break;
-                }
+                } /* case PT_DYNAMIC */
+
                 case PT_GNU_RELRO: {
-                    // resize buffer
-
-                    void *ptr;
-
-                    relro_count++;
-
-                    if (!(ptr = reallocarray(relros, relro_count, sizeof(tmix_chunk))))
-                        goto error;
-                    relros = ptr;
-
                     // populate relro information
 
-                    tmix_chunk *relro = &relros[relro_count - 1];  // current element
+                    tmix_chunk *relro = &relros[k++];  // current element
 
                     size_t reminder = phdr->p_vaddr % __pagesize;
 
@@ -386,44 +406,62 @@ error:
 
                     break;
                 }
+
                 case PT_INTERP: {
                     // path to dynamic linker, ignored
                     break;
                 }
+
                 case PT_GNU_STACK: {
                     assert(!execstack);
                     execstack = !!(__conv_flags(phdr->p_flags) & TMIXELF_SEG_EXEC);
                     break;
                 }
+
                 case PT_NOTE: {
                     // compiler information, ignored
                     break;
                 }
+
                 default: {
                     tmix_fixme("unhandled segment type 0x%x", phdr->p_type);
                     break;
                 }
-            }
+            } /* switch (phdr->p_type) */
+        } /* for (i = 0; i < hdr.e_phnum; i++) */
+
+        // resize array to actual sizes if needed
+
+        void *ptr;
+
+        if (j < load_seg_cnt) {
+            if (!(ptr = reallocarray(si, j, sizeof(tmixelf_seg))))
+                goto error;  // idk know how could shrinking an array fail anyway
+            si = ptr;
         }
+
+        // finally...
 
         free(phdrs);
 
-        if (j) {
+        // populate elf info
+
+        if (load_seg_cnt) {
             // at least one loadable segment is found
 
             ei->seg.data = si;
-            ei->seg.size = j;
+            ei->seg.size = load_seg_cnt;
 
             ei->mem_size = highest_addr;
 
             if (hdr.e_entry)
                 ei->entry = hdr.e_entry - si[0].off;  // setup entrypoint
 
-            if (relro_count) {
+            if (relro_seg_cnt) {
                 // at least one relro entry is found
 
                 ei->relro.data = relros;
-                ei->relro.size = relro_count;
+                ei->relro.size = relro_seg_cnt;
             }
         }
 
