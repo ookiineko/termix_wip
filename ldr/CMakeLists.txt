@@ -6,7 +6,7 @@ add_executable(tmixldr
     elf/parse.c
     load.c
     main.c)
-if (LINUX)
+if (NOT (WIN32 OR CYGWIN))
     target_link_options(tmixldr PRIVATE
         -Wl,-rpath=$ORIGIN/../lib)
 endif()
