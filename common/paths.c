@@ -25,7 +25,7 @@
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
-#elif defined(__linux__) || defined(__CYGWIN__)
+#else
 #include <unistd.h>  // for readlink
 #endif
 
@@ -61,7 +61,7 @@ __attribute__((constructor)) static void __init_progdir(void) {
 
         return;
     }
-#elif defined(__linux__) || defined(__CYGWIN__)
+#else
     ssize_t len;
 
     len = readlink("/proc/self/exe", __progdir_buff, sizeof(__progdir_buff));
@@ -73,8 +73,6 @@ __attribute__((constructor)) static void __init_progdir(void) {
     }
 
     __progdir_buff[len] = '\0';
-#else
-#error Dont know how to fetch self location on this platform yet
 #endif
 
     ___tmix_progdir = dirname(__progdir_buff);

@@ -25,7 +25,7 @@
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
-#elif defined(__linux__) || defined(__CYGWIN__)
+#else
 #include <unistd.h>  // for sysconf
 #endif
 
@@ -76,8 +76,10 @@
 
 #ifdef TMIX_BIG_ENDIAN
 #define __EXPECTED_EIDATA       (ELFDATA2MSB)
-#else
+#elif defined(TMIX_LITTLE_ENDIAN)
 #define __EXPECTED_EIDATA       (ELFDATA2LSB)
+#else
+#error Dont know endian-ness on this platform yet
 #endif
 
 #define __ROUND_DOWN(_x, _align)   ((_x / _align) * _align)
@@ -514,12 +516,10 @@ __attribute__((constructor)) static void __init_pagesize(void) {
     SYSTEM_INFO si = {};
     GetSystemInfo(&si);
     __pagesize = si.dwAllocationGranularity;
-#elif defined(__linux__) || defined(__CYGWIN__)
+#else
     __pagesize = sysconf(_SC_PAGESIZE);
 
     if (__pagesize < 0)
         perror("error determining machine page size");
-#else
-#error Dont know how to get page size on this platform yet
 #endif
 }

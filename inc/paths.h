@@ -21,7 +21,7 @@
 /*
  * directory storing the runtime libraries (relative to the bindir)
  */
-#ifdef __CYGWIN__
+#if defined(_WIN32) || defined(__CYGWIN__)
 #define _TMIX_LIBPATH                "."
 #else
 #define _TMIX_LIBPATH                "../lib"

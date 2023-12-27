@@ -20,12 +20,18 @@
 
 #if defined(__BIG_ENDIAN__)|| (defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__))
 #define TMIX_BIG_ENDIAN
+#elif defined(__LITTLE_ENDIAN__)|| (defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__))
+#define TMIX_LITTLE_ENDIAN
+#else
+#warning Dont know endian-ness on this platform yet
 #endif
 
 #if defined(__i386__) || defined(__arm__)
 #define TMIX32
 #elif defined(__x86_64__) || defined(__aarch64__)
 #define TMIX64
+#else
+#warning Dont know word side on this platform yet
 #endif
 
 #endif /* TERMIX_COMMON_INCLUDE_PLATFORM_H */
