@@ -21,11 +21,15 @@ Another highlight is support for using native Windows APIs alongside with Linux 
 
 #### Milestones
 
-- [ ] basic ELF loader
+- [x] basic ELF loader (WIP)
     - [ ] dynamic relocation (WIP)
     - [ ] setup stack
 
-- [ ] get a basic helloworld to run on Windows
+- [x] get a basic helloworld to run on Windows
+
+#### Short-term
+
+* port to MinGW (WIP)
 
 #### Long-term
 
