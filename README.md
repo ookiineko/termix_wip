@@ -2,7 +2,7 @@ Termix - *Mix it with Linux terminal*
 ==================================
 
 > *Warning*
-> This is a learning project, nothing useful yet.
+> This is just my personal learning project, now under ***VERY VERY*** early proof-of-concept stage, so please don't expect anything useful yet.
 >
 > For documentation, view the [development page](DEVELOPMENT.md).
 
