@@ -9,9 +9,11 @@ Termix - *Mix it with Linux terminal*
 Termix aims to be yet another compatibility layer and distribution for running a Linux environment on non-Linux platforms,
 currently mainly targeting at the Microsoft Windows.
 
-Unlike Cygwin, Termix's design goal is to allow running simple command-line applications with hopefully no porting efforts, but allow directly reusing the existing Linux's software ecosystem.
+Unlike Cygwin, Termix's design goal is to allow simple command-line applications to run with hopefully no porting efforts, but to directly reuse of Linux's existing software ecosystem.
 
-Similar to WINE, Termix is also not an emulator, it directly loads and executes the program natively on supported machines. However, in some conditions, it may require recompiling the programs from source (see the [Windows limitation](#windows-limitation)) to run, but usually this should not involve any source changes.
+Similar to WINE, Termix as a compatibility layer also does not try to emulate processor or rely on virtualization to run a whole real Linux kernel, instead it simply tries to load and execute the program directly and thus natively on supported machines.
+
+However, in some conditions (see the [Windows limitation](#windows-limitation)), it may require recompiling the programs from source in order to load them with Termix, but this usually should not involve any source changes.
 
 Another highlight is support for using native Windows APIs alongside with Linux ones in Termix is also planned to be added (the idea is inspired by Cygwin), thus the "mix" in the name.
 
