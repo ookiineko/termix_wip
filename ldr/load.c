@@ -24,7 +24,7 @@
 #include "load.h"
 
 /*
- * convert internal semgent flags to OS-specific protections
+ * convert internal segment flags to OS-specific protections
  */
 static inline int __conv_prot(tmixelf_seg_flag flags) {
     int res = 0;
