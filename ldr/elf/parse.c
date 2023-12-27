@@ -166,8 +166,17 @@ bad_elf:
         if (lseek(fd, hdr.e_phoff, SEEK_SET) < 0)
             return -1;
 
+        __PHDR_TYPE *phdrs = malloc(sizeof(__PHDR_TYPE) * hdr.e_phnum);
+
+        if (!phdrs)
+            return -1;
+
+        if (read(fd, phdrs, sizeof(__PHDR_TYPE) * hdr.e_phnum) != (sizeof(__PHDR_TYPE) * hdr.e_phnum)) {
+            free(phdrs);
+            goto read_failed;
+        }
+
         int i, j = 0;
-        __PHDR_TYPE phdr;
         ssize_t first_seg_vaddr = -1;
         ssize_t highest_addr = -1;
         tmixelf_seg *si = NULL;  // array
@@ -178,28 +187,25 @@ bad_elf:
         // iterate through all segments
 
         for (i = 0; i < hdr.e_phnum; i++) {
-            if (read(fd, &phdr, sizeof(__PHDR_TYPE)) != sizeof(__PHDR_TYPE)) {
-                if (si)
-                    free(si);  // clean up mess before quit
+            const __PHDR_TYPE *phdr = &phdrs[i];
 
-                goto read_failed;
-            }
-
-            switch (phdr.p_type) {
+            switch (phdr->p_type) {
                 case PT_PHDR: {
                     // the program header table itself, skipping
                     break;
                 }
                 case PT_LOAD: {
-                    if (!phdr.p_memsz)
+                    if (!phdr->p_memsz)
                         continue;  // wat
 
                     // check alignment
 
-                    if ((phdr.p_align % __pagesize) != 0 ||
-                        ((phdr.p_vaddr - phdr.p_offset) % phdr.p_align) != 0) {
+                    if ((phdr->p_align % __pagesize) != 0 ||
+                        ((phdr->p_vaddr - phdr->p_offset) % phdr->p_align) != 0) {
                         errno = EBADF;
 error:
+                        free(phdrs);
+
                         if (si)
                             free(si);
 
@@ -222,8 +228,8 @@ error:
                     tmixelf_seg *seg = &si[j - 1];  // current segment
                     memset(seg, 0, sizeof(tmixelf_seg));
 
-                    size_t reminder = phdr.p_vaddr % phdr.p_align;
-                    size_t vaddr = __ROUND_DOWN(phdr.p_vaddr, phdr.p_align);
+                    size_t reminder = phdr->p_vaddr % phdr->p_align;
+                    size_t vaddr = __ROUND_DOWN(phdr->p_vaddr, phdr->p_align);
 
                     if (first_seg_vaddr < 0) {
                         first_seg_vaddr = vaddr;
@@ -231,22 +237,22 @@ error:
                     } else
                         seg->off = vaddr - first_seg_vaddr;
 
-                    size_t filesize = phdr.p_filesz + reminder;
-                    size_t memsize = phdr.p_memsz + reminder;
+                    size_t filesize = phdr->p_filesz + reminder;
+                    size_t memsize = phdr->p_memsz + reminder;
 
-                    if (phdr.p_filesz) {
+                    if (phdr->p_filesz) {
                         // has file data
-                        seg->file.off = __ROUND_DOWN(phdr.p_offset, phdr.p_align);
+                        seg->file.off = __ROUND_DOWN(phdr->p_offset, phdr->p_align);
                         seg->file.size = filesize;  // add reminder if needed
 
-                        if (phdr.p_memsz > phdr.p_filesz) {
+                        if (phdr->p_memsz > phdr->p_filesz) {
                             // has extra zero paddings after file data
-                            size_t file_pages = seg->file.size / phdr.p_align;
+                            size_t file_pages = seg->file.size / phdr->p_align;
 
-                            if ((seg->file.size % phdr.p_align) != 0)
+                            if ((seg->file.size % phdr->p_align) != 0)
                                 file_pages++;
 
-                            size_t real_size = file_pages * phdr.p_align;
+                            size_t real_size = file_pages * phdr->p_align;
 
                             if (real_size < memsize) {
                                 // actually need explicit zero padding
@@ -260,7 +266,7 @@ error:
                         seg->pad.size = memsize;  // add reminder to here since no file data
                     }
 
-                    seg->flags = __conv_flags(phdr.p_flags);
+                    seg->flags = __conv_flags(phdr->p_flags);
 
                     if ((seg->flags & TMIXELF_SEG_EXEC) && !(seg->flags & TMIXELF_SEG_READ)) {
                         // executable but not readable ?!
@@ -271,7 +277,7 @@ error:
 
                     // update total memory size
 
-                    size_t end = seg->off + phdr.p_memsz + reminder;
+                    size_t end = seg->off + phdr->p_memsz + reminder;
 
                     if (highest_addr < (ssize_t) end)
                         highest_addr = end;
@@ -279,14 +285,7 @@ error:
                     break;
                 }
                 case PT_DYNAMIC: {
-                    // temporarily seek to table
-
-                    off_t old_pos = lseek(fd, 0, SEEK_CUR);
-
-                    if (old_pos < 0)
-                        goto error;
-
-                    if (lseek(fd, phdr.p_offset, SEEK_SET) < 0)
+                    if (lseek(fd, phdr->p_offset, SEEK_SET) < 0)
                         goto error;
 
                     // iterate through all entries
@@ -363,11 +362,6 @@ error:
 
                     // TODO: iterate through symbol table
 
-                    // restore file position before reading the next header
-
-                    if (lseek(fd, old_pos, SEEK_SET) < 0)
-                        goto error;
-
                     break;
                 }
                 case PT_GNU_RELRO: {
@@ -385,10 +379,10 @@ error:
 
                     tmix_chunk *relro = &relros[relro_count - 1];  // current element
 
-                    size_t reminder = phdr.p_vaddr % __pagesize;
+                    size_t reminder = phdr->p_vaddr % __pagesize;
 
-                    relro->off = __ROUND_DOWN(phdr.p_vaddr, __pagesize);
-                    relro->size = phdr.p_memsz + reminder;
+                    relro->off = __ROUND_DOWN(phdr->p_vaddr, __pagesize);
+                    relro->size = phdr->p_memsz + reminder;
 
                     break;
                 }
@@ -398,7 +392,7 @@ error:
                 }
                 case PT_GNU_STACK: {
                     assert(!execstack);
-                    execstack = !!(__conv_flags(phdr.p_flags) & TMIXELF_SEG_EXEC);
+                    execstack = !!(__conv_flags(phdr->p_flags) & TMIXELF_SEG_EXEC);
                     break;
                 }
                 case PT_NOTE: {
@@ -406,11 +400,13 @@ error:
                     break;
                 }
                 default: {
-                    tmix_fixme("unhandled segment type 0x%x", phdr.p_type);
+                    tmix_fixme("unhandled segment type 0x%x", phdr->p_type);
                     break;
                 }
             }
         }
+
+        free(phdrs);
 
         if (j) {
             // at least one loadable segment is found
