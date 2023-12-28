@@ -1,4 +1,4 @@
-Termix - *Mix it with Linux terminal*
+Termix - *Mix it with Linux terminal* 😈
 ==================================
 
 > *Warning*
