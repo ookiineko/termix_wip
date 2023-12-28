@@ -23,6 +23,7 @@ Another highlight is support for using native Windows APIs alongside with Linux 
 
 - [x] basic ELF loader (WIP)
     - [ ] dynamic relocation (WIP)
+      - [ ] support for ELF shared objects
     - [ ] setup stack
 
 - [x] get a basic helloworld to run on Windows
