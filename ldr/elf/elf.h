@@ -46,16 +46,36 @@ _tmix_typedef(struct, elf_seg) {
 _tmix_typedef_end(struct, elf_seg);
 
 /*
+ * ELF symbol type
+ */
+_tmix_typedef(enum, elf_sym_type) {
+    TMIXELF_SYM_DATA = 0,  // symbol is data (variables)
+    TMIXELF_SYM_FUNC = 1  // symbol is a function
+};
+_tmix_typedef_end(enum, elf_sym_type);
+
+/*
+ * ELF symbol
+ *
+ * name - dynamically allocated, need to be freed once this struct is not used
+ */
+_tmix_typedef(struct, elf_sym) {
+    char *name;
+    tmixelf_sym_type type;
+};
+_tmix_typedef_end(struct, elf_sym);
+
+/*
  * ELF relocation info
  */
 _tmix_typedef(struct, elf_reloc) {
-    char *sym;  // symbol name string
+    tmixelf_sym sym;  // information about the relocated symbol
     size_t off;  // memory location storing the address of this symbol (relative to the first segment)
 };
 _tmix_typedef_end(struct, elf_reloc);
 
 /*
- * describes information in an ELF header
+ * describes information of an ELF file
  *
  * initialize this struct with zero
  */
@@ -67,6 +87,7 @@ _tmix_typedef(struct, elf_info) {
     bool execstack;  // whether if has an executable stack
     tmix_array relros;  // array of segments that require changing memory protection to
                        // read-only after dynamic linking, each element storing tmix_chunk
+    tmix_array needs;  // list of depended shared library names
 };
 _tmix_typedef_end(struct, elf_info);
 

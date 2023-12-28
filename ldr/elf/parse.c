@@ -501,10 +501,10 @@ void tmixldr_free_elfinfo(tmixelf_info *ei) {
         // free strings, then free array
 
         for (i = 0; i < ei->relocs.size; i++) {
-            if (ri[i].sym) {
-                free(ri[i].sym);
+            if (ri[i].sym.name) {
+                free(ri[i].sym.name);
 
-                ri[i].sym = NULL;
+                ri[i].sym.name = NULL;
             }
         }
 
@@ -517,6 +517,12 @@ void tmixldr_free_elfinfo(tmixelf_info *ei) {
         free(ei->relros.data);
 
         ei->relros.data = NULL;
+    }
+
+    if (ei->needs.data) {
+        free(ei->needs.data);
+
+        ei->needs.data = NULL;
     }
 }
 

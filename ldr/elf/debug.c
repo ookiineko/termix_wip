@@ -47,7 +47,9 @@ void tmixldr_print_elfinfo(const tmixelf_info *ei) {
 
     printf("post-reloc RO segment count: %ld\n", ei->relros.size);
 
-    int i, j;
+    printf("relocation count: %ld\n", ei->relocs.size);
+
+    int i;
 
     if (ei->segs.size) {
         if (ei->relros.size) {
@@ -87,8 +89,26 @@ void tmixldr_print_elfinfo(const tmixelf_info *ei) {
     }
 
     if (ei->relocs.size) {
-        assert(ei->relocs.data);
 
-        // TODO
+        tmixelf_reloc *relocs = ei->relocs.data;
+        assert(relocs);
+
+        printf("relocations:\n");
+
+        for (i = 0; i < ei->relocs.size; i++)
+            printf("  " _PTRFMT "%s (%s)\n", relocs[i].off, relocs[i].sym.name,
+                        relocs[i].sym.type == TMIXELF_SYM_DATA ? "data" : (
+                            relocs[i].sym.type == TMIXELF_SYM_FUNC ? "function" : "unknown"));
+    }
+
+    if (ei->needs.size) {
+        printf("required libraries:\n");
+
+        char **needs = ei->needs.data;
+
+        assert(needs);
+
+        for (i = 0; i < ei->needs.size; i++)
+            printf("%d: %s\n", i, needs[i]);
     }
 }
