@@ -42,6 +42,8 @@
 #define __PHDR_TYPE             Elf32_Phdr
 #define __ELFDYN_TYPE           Elf32_Dyn
 #define __ELFSYM_TYPE           Elf32_Sym
+#define __ELFREL_TYPE           Elf32_Rel
+#define __ELFRELA_TYPE          Elf32_Rela
 #define __ELFWORD_TYPE          Elf32_Word
 
 #define __ELF_ST_BIND           ELF32_ST_BIND
@@ -53,6 +55,8 @@
 #define __PHDR_TYPE             Elf64_Phdr
 #define __ELFDYN_TYPE           Elf64_Dyn
 #define __ELFSYM_TYPE           Elf64_Sym
+#define __ELFREL_TYPE           Elf64_Rel
+#define __ELFRELA_TYPE          Elf64_Rela
 #define __ELFWORD_TYPE          Elf64_Word
 
 #define __ELF_ST_BIND           ELF64_ST_BIND
@@ -83,6 +87,9 @@
 #endif
 
 #define __ROUND_DOWN(_x, _align)   ((_x / _align) * _align)
+
+#define __DYN_TAKE_PTR(_dyn)       (_dyn.d_un.d_ptr)
+#define __DYN_TAKE_VAL(_dyn)       (_dyn.d_un.d_val)
 
 static ssize_t __pagesize = -1;
 
@@ -327,7 +334,9 @@ error:
                     ssize_t strtab_off = -1;
                     ssize_t strtab_size = -1;
                     ssize_t symtab_off = -1;
-                    ssize_t got_off = -1;
+                    ssize_t rel_off = -1;
+                    ssize_t rel_size = -1;
+                    bool rela = false;
 
                     for (;;) {
                         if (read(fd, &dyn, sizeof(__ELFDYN_TYPE)) != sizeof(__ELFDYN_TYPE))
@@ -335,7 +344,7 @@ error:
 
                         switch (dyn.d_tag) {
                             case DT_NULL:
-                                // end of array, ignored
+                                // end of array, handled below
                                 break;
                             case DT_NEEDED:
                                 // TODO: put this info into actual use when needed
@@ -347,36 +356,37 @@ error:
                                 // TODO: put this info into actual use when needed
                                 break;
                             case DT_STRTAB:
-                                strtab_off = dyn.d_un.d_ptr;
+                                strtab_off = __DYN_TAKE_PTR(dyn);
                                 break;
                             case DT_STRSZ:
-                                strtab_size = dyn.d_un.d_val;
+                                strtab_size = __DYN_TAKE_VAL(dyn);
                                 break;
                             case DT_SYMENT:
-                                assert(dyn.d_un.d_val == sizeof(__ELFSYM_TYPE));
+                                assert(__DYN_TAKE_VAL(dyn) == sizeof(__ELFSYM_TYPE));
                                 break;
                             case DT_SYMTAB:
-                                strtab_off = dyn.d_un.d_ptr;
+                                strtab_off = __DYN_TAKE_PTR(dyn);
                                 break;
                             case DT_PLTGOT:
-                                got_off = dyn.d_un.d_ptr;
+                                // unused by us for now
                                 break;
                             case DT_PLTRELSZ:
-                                // TODO: is this needed?
+                                rel_size = __DYN_TAKE_VAL(dyn);
                                 break;
                             case DT_PLTREL:
-                                // TODO: is this needed?
+                                rela = __DYN_TAKE_VAL(dyn) == DT_RELA;
                                 break;
                             case DT_JMPREL:
-                                // lazy binding is not implemented, ignored
+                                // location of relocation entries
+                                rel_off = __DYN_TAKE_PTR(dyn);
                                 break;
                             case DT_FLAGS_1:
-                                switch (dyn.d_un.d_val) {
+                                switch (__DYN_TAKE_VAL(dyn)) {
                                     case DF_1_PIE:
-                                        // already know, ignored
+                                        // already assumed, ignore
                                         break;
                                     default:
-                                        tmix_fixme("unhandled state flag 0x%lx", dyn.d_un.d_val);
+                                        tmix_fixme("unhandled state flag 0x%lx", __DYN_TAKE_VAL(dyn));
                                         break;
                                 }
                                 break;
