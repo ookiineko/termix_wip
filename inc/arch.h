@@ -1,5 +1,5 @@
 /*
-  platform.h - Platform-specific definitions
+  arch.h - Architecture-specific definitions
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -15,8 +15,8 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TERMIX_COMMON_INCLUDE_PLATFORM_H
-#define TERMIX_COMMON_INCLUDE_PLATFORM_H
+#ifndef TERMIX_COMMON_INCLUDE_ARCH_H
+#define TERMIX_COMMON_INCLUDE_ARCH_H
 
 #if defined(__BIG_ENDIAN__)|| (defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__))
 #define TMIX_BIG_ENDIAN
@@ -34,4 +34,4 @@
 #warning Dont know word side on this platform yet
 #endif
 
-#endif /* TERMIX_COMMON_INCLUDE_PLATFORM_H */
+#endif /* TERMIX_COMMON_INCLUDE_ARCH_H */

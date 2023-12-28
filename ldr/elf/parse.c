@@ -31,8 +31,8 @@
 
 #include <gelf.h>
 
+#include "../../inc/arch.h"
 #include "../../inc/logging.h"
-#include "../../inc/platform.h"
 
 #include "elf.h"
 

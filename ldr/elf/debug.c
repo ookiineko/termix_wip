@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 
-#include "../../inc/platform.h"
+#include "../../inc/arch.h"
 
 #include "elf.h"
 
