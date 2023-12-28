@@ -122,7 +122,6 @@ int tmixldr_parse_elf(int fd, tmixelf_info *ei) {
     __EHDR_TYPE hdr;
 
     if (read(fd, &hdr, sizeof(__EHDR_TYPE)) != sizeof(__EHDR_TYPE)) {
-read_failed:
         // failed to short read
         errno = EIO;
         return -1;
@@ -237,7 +236,7 @@ error:
         int j = 0;  // current load segment index
         int k = 0;  // current relro segment index
         ssize_t first_seg_vaddr = -1;
-        ssize_t highest_addr = -1;
+        size_t highest_addr = 0;
         bool execstack = false;
 
         for (i = 0; i < hdr.e_phnum; i++) {
@@ -317,7 +316,7 @@ error:
 
                     size_t end = seg->off + phdr->p_memsz + reminder;
 
-                    if (highest_addr < (ssize_t) end)
+                    if (highest_addr < end)
                         highest_addr = end;
 
                     break;
@@ -331,11 +330,11 @@ error:
 
                     __ELFDYN_TYPE dyn;
 
-                    ssize_t strtab_off = -1;
-                    ssize_t strtab_size = -1;
-                    ssize_t symtab_off = -1;
-                    ssize_t rel_off = -1;
-                    ssize_t rel_size = -1;
+                    size_t strtab_off = 0;
+                    size_t strtab_size = 0;
+                    size_t symtab_off = 0;
+                    size_t rel_off = 0;
+                    size_t rel_size = 0;
                     bool rela = false;
 
                     for (;;) {
@@ -402,7 +401,7 @@ error:
                             break;
                     } /* for (;;) */
 
-                    // TODO: iterate through symbol table
+                    // TODO: iterate through relocation table
 
                     break;
                 } /* case PT_DYNAMIC */
