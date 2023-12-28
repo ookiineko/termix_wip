@@ -37,66 +37,66 @@
 #include "elf.h"
 
 #ifdef TMIX32
-#define __EXPECTED_EICLASS      (ELFCLASS32)
-#define __EHDR_TYPE             Elf32_Ehdr
-#define __PHDR_TYPE             Elf32_Phdr
-#define __ELFDYN_TYPE           Elf32_Dyn
-#define __ELFSYM_TYPE           Elf32_Sym
-#define __ELFREL_TYPE           Elf32_Rel
-#define __ELFRELA_TYPE          Elf32_Rela
-#define __ELFWORD_TYPE          Elf32_Word
+#define _EXPECTED_EICLASS      (ELFCLASS32)
+#define _EHDR_TYPE             Elf32_Ehdr
+#define _PHDR_TYPE             Elf32_Phdr
+#define _ELFDYN_TYPE           Elf32_Dyn
+#define _ELFSYM_TYPE           Elf32_Sym
+#define _ELFREL_TYPE           Elf32_Rel
+#define _ELFRELA_TYPE          Elf32_Rela
+#define _ELFWORD_TYPE          Elf32_Word
 
-#define __ELF_ST_BIND           ELF32_ST_BIND
-#define __ELF_ST_TYPE           ELF32_ST_TYPE
-#define __ELF_ST_VIS            ELF32_ST_VISIBILITY
+#define _ELF_ST_BIND           ELF32_ST_BIND
+#define _ELF_ST_TYPE           ELF32_ST_TYPE
+#define _ELF_ST_VIS            ELF32_ST_VISIBILITY
 #elif defined(TMIX64)
-#define __EXPECTED_EICLASS      (ELFCLASS64)
-#define __EHDR_TYPE             Elf64_Ehdr
-#define __PHDR_TYPE             Elf64_Phdr
-#define __ELFDYN_TYPE           Elf64_Dyn
-#define __ELFSYM_TYPE           Elf64_Sym
-#define __ELFREL_TYPE           Elf64_Rel
-#define __ELFRELA_TYPE          Elf64_Rela
-#define __ELFWORD_TYPE          Elf64_Word
+#define _EXPECTED_EICLASS      (ELFCLASS64)
+#define _EHDR_TYPE             Elf64_Ehdr
+#define _PHDR_TYPE             Elf64_Phdr
+#define _ELFDYN_TYPE           Elf64_Dyn
+#define _ELFSYM_TYPE           Elf64_Sym
+#define _ELFREL_TYPE           Elf64_Rel
+#define _ELFRELA_TYPE          Elf64_Rela
+#define _ELFWORD_TYPE          Elf64_Word
 
-#define __ELF_ST_BIND           ELF64_ST_BIND
-#define __ELF_ST_TYPE           ELF64_ST_TYPE
-#define __ELF_ST_VIS            ELF64_ST_VISIBILITY
+#define _ELF_ST_BIND           ELF64_ST_BIND
+#define _ELF_ST_TYPE           ELF64_ST_TYPE
+#define _ELF_ST_VIS            ELF64_ST_VISIBILITY
 #else
 #error Dont know ELF types on this platform yet
 #endif
 
 #ifdef __i386__
-#define __EXPECTED_EMACH        (EM_386)
+#define _EXPECTED_EMACH        (EM_386)
 #elif defined(__arm__)
-#define __EXPECTED_EMACH        (EM_ARM)
+#define _EXPECTED_EMACH        (EM_ARM)
 #elif defined(__x86_64__)
-#define __EXPECTED_EMACH        (EM_X86_64)
+#define _EXPECTED_EMACH        (EM_X86_64)
 #elif defined(__aarch64__)
-#define __EXPECTED_EMACH        (EM_AARCH64)
+#define _EXPECTED_EMACH        (EM_AARCH64)
 #else
 #error Dont know ELF machine value on this architecture yet
 #endif
 
 #ifdef TMIX_BIG_ENDIAN
-#define __EXPECTED_EIDATA       (ELFDATA2MSB)
+#define _EXPECTED_EIDATA       (ELFDATA2MSB)
 #elif defined(TMIX_LITTLE_ENDIAN)
-#define __EXPECTED_EIDATA       (ELFDATA2LSB)
+#define _EXPECTED_EIDATA       (ELFDATA2LSB)
 #else
 #error Dont know endian-ness on this platform yet
 #endif
 
-#define __ROUND_DOWN(_x, _align)   ((_x / _align) * _align)
+#define _ROUND_DOWN(_x, _align)   ((_x / _align) * _align)
 
-#define __DYN_TAKE_PTR(_dyn)       (_dyn.d_un.d_ptr)
-#define __DYN_TAKE_VAL(_dyn)       (_dyn.d_un.d_val)
+#define _DYN_TAKE_PTR(_dyn)       (_dyn.d_un.d_ptr)
+#define _DYN_TAKE_VAL(_dyn)       (_dyn.d_un.d_val)
 
 static ssize_t __pagesize = -1;
 
 /*
  * convert ELF segment flags to internal ones
  */
-static inline tmixelf_seg_flag __conv_flags(__ELFWORD_TYPE flags) {
+static inline tmixelf_seg_flag __conv_flags(_ELFWORD_TYPE flags) {
     tmixelf_seg_flag res = 0;
 
     if (flags & PF_R)
@@ -119,9 +119,9 @@ int tmixldr_parse_elf(int fd, tmixelf_info *ei) {
     if (lseek(fd, 0, SEEK_SET) < 0)
         return -1;
 
-    __EHDR_TYPE hdr;
+    _EHDR_TYPE hdr;
 
-    if (read(fd, &hdr, sizeof(__EHDR_TYPE)) != sizeof(__EHDR_TYPE)) {
+    if (read(fd, &hdr, sizeof(_EHDR_TYPE)) != sizeof(_EHDR_TYPE)) {
         // failed to short read
         errno = EIO;
         return -1;
@@ -135,10 +135,10 @@ bad_elf:
         return -1;
     }
 
-    if (hdr.e_ident[EI_CLASS] != __EXPECTED_EICLASS)
+    if (hdr.e_ident[EI_CLASS] != _EXPECTED_EICLASS)
         goto bad_elf;
 
-    if (hdr.e_ident[EI_DATA] != __EXPECTED_EIDATA)
+    if (hdr.e_ident[EI_DATA] != _EXPECTED_EIDATA)
         goto bad_elf;
 
     if (hdr.e_ident[EI_VERSION] != EV_CURRENT)
@@ -156,21 +156,21 @@ bad_elf:
     if (hdr.e_type != ET_DYN)
         goto bad_elf;
 
-    if (hdr.e_machine != __EXPECTED_EMACH)
+    if (hdr.e_machine != _EXPECTED_EMACH)
         goto bad_elf;
 
     if (hdr.e_version != EV_CURRENT)
         goto bad_elf;
 
-    if (hdr.e_ehsize != sizeof(__EHDR_TYPE))
+    if (hdr.e_ehsize != sizeof(_EHDR_TYPE))
         goto bad_elf;
 
-    if (hdr.e_phentsize != sizeof(__PHDR_TYPE))
+    if (hdr.e_phentsize != sizeof(_PHDR_TYPE))
         goto bad_elf;
 
     // parse segments
 
-    __PHDR_TYPE *phdrs = NULL;  // array
+    _PHDR_TYPE *phdrs = NULL;  // array
 
     tmixelf_seg *si = NULL;  // array, optional
     tmix_chunk *relros = NULL;  // array, optional
@@ -181,10 +181,10 @@ bad_elf:
         if (lseek(fd, hdr.e_phoff, SEEK_SET) < 0)
             return -1;
 
-        if (!(phdrs = calloc(hdr.e_phnum, sizeof(__PHDR_TYPE))))
+        if (!(phdrs = calloc(hdr.e_phnum, sizeof(_PHDR_TYPE))))
             return -1;
 
-        if (read(fd, phdrs, sizeof(__PHDR_TYPE) * hdr.e_phnum) != (sizeof(__PHDR_TYPE) * hdr.e_phnum)) {
+        if (read(fd, phdrs, sizeof(_PHDR_TYPE) * hdr.e_phnum) != (sizeof(_PHDR_TYPE) * hdr.e_phnum)) {
             errno = EIO;
 error:
             free(phdrs);
@@ -200,7 +200,7 @@ error:
 
         int i;  // current semgent index
 
-        const __PHDR_TYPE *phdr = NULL;  // current segment header
+        const _PHDR_TYPE *phdr = NULL;  // current segment header
                                          // set this at the beginning in loops
 
         // but first calculate the required size for arrays
@@ -266,7 +266,7 @@ error:
                     memset(seg, 0, sizeof(tmixelf_seg));
 
                     size_t reminder = phdr->p_vaddr % phdr->p_align;
-                    size_t vaddr = __ROUND_DOWN(phdr->p_vaddr, phdr->p_align);
+                    size_t vaddr = _ROUND_DOWN(phdr->p_vaddr, phdr->p_align);
 
                     if (first_seg_vaddr < 0) {
                         first_seg_vaddr = vaddr;
@@ -279,7 +279,7 @@ error:
 
                     if (phdr->p_filesz) {
                         // has file data
-                        seg->file.off = __ROUND_DOWN(phdr->p_offset, phdr->p_align);
+                        seg->file.off = _ROUND_DOWN(phdr->p_offset, phdr->p_align);
                         seg->file.size = filesize;  // add reminder if needed
 
                         if (phdr->p_memsz > phdr->p_filesz) {
@@ -328,7 +328,7 @@ error:
 
                     // iterate through all entries
 
-                    __ELFDYN_TYPE dyn;
+                    _ELFDYN_TYPE dyn;
 
                     size_t strtab_off = 0;
                     size_t strtab_size = 0;
@@ -338,7 +338,7 @@ error:
                     bool rela = false;
 
                     for (;;) {
-                        if (read(fd, &dyn, sizeof(__ELFDYN_TYPE)) != sizeof(__ELFDYN_TYPE))
+                        if (read(fd, &dyn, sizeof(_ELFDYN_TYPE)) != sizeof(_ELFDYN_TYPE))
                             goto error;
 
                         switch (dyn.d_tag) {
@@ -355,37 +355,37 @@ error:
                                 // TODO: put this info into actual use when needed
                                 break;
                             case DT_STRTAB:
-                                strtab_off = __DYN_TAKE_PTR(dyn);
+                                strtab_off = _DYN_TAKE_PTR(dyn);
                                 break;
                             case DT_STRSZ:
-                                strtab_size = __DYN_TAKE_VAL(dyn);
+                                strtab_size = _DYN_TAKE_VAL(dyn);
                                 break;
                             case DT_SYMENT:
-                                assert(__DYN_TAKE_VAL(dyn) == sizeof(__ELFSYM_TYPE));
+                                assert(_DYN_TAKE_VAL(dyn) == sizeof(_ELFSYM_TYPE));
                                 break;
                             case DT_SYMTAB:
-                                strtab_off = __DYN_TAKE_PTR(dyn);
+                                strtab_off = _DYN_TAKE_PTR(dyn);
                                 break;
                             case DT_PLTGOT:
                                 // unused by us for now
                                 break;
                             case DT_PLTRELSZ:
-                                rel_size = __DYN_TAKE_VAL(dyn);
+                                rel_size = _DYN_TAKE_VAL(dyn);
                                 break;
                             case DT_PLTREL:
-                                rela = __DYN_TAKE_VAL(dyn) == DT_RELA;
+                                rela = _DYN_TAKE_VAL(dyn) == DT_RELA;
                                 break;
                             case DT_JMPREL:
                                 // location of relocation entries
-                                rel_off = __DYN_TAKE_PTR(dyn);
+                                rel_off = _DYN_TAKE_PTR(dyn);
                                 break;
                             case DT_FLAGS_1:
-                                switch (__DYN_TAKE_VAL(dyn)) {
+                                switch (_DYN_TAKE_VAL(dyn)) {
                                     case DF_1_PIE:
                                         // already assumed, ignore
                                         break;
                                     default:
-                                        tmix_fixme("unhandled state flag 0x%lx", __DYN_TAKE_VAL(dyn));
+                                        tmix_fixme("unhandled state flag 0x%lx", _DYN_TAKE_VAL(dyn));
                                         break;
                                 }
                                 break;
@@ -413,7 +413,7 @@ error:
 
                     size_t reminder = phdr->p_vaddr % __pagesize;
 
-                    relro->off = __ROUND_DOWN(phdr->p_vaddr, __pagesize);
+                    relro->off = _ROUND_DOWN(phdr->p_vaddr, __pagesize);
                     relro->size = phdr->p_memsz + reminder;
 
                     break;
