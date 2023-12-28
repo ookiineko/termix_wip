@@ -2,16 +2,16 @@ Termix - *Mix it with Linux terminal* 😈
 ==================================
 
 > *Warning*
-> This is just my personal learning project, now under ***VERY VERY*** early proof-of-concept stage, so please don't expect anything useful yet.
+> This is just my personal learning project, now under ***VERY VERY*** early proof-of-concept stage 🚧, so please don't expect anything useful yet ⛔.
 
 Termix is both a compatibility layer and a distribution for running a Linux environment on non-Linux platforms,
-currently it mainly targets at the Microsoft Windows.
+currently it mainly targets at the Microsoft Windows. 🪟✨
 
-Unlike Cygwin, Termix's design goal is to allow simple command-line applications that doesn't depend on too much advanced and complicated Linux features or behaviors to run with hopefully no porting efforts, and to directly reuse of Linux's existing software ecosystem. In this way, we don't need upstream support to run these software on Termix, as long as they have already supported Linux.
+Unlike Cygwin, Termix's design goal is to allow simple command-line applications that doesn't depend on too much advanced and complicated Linux features or behaviors to run with hopefully no porting efforts, and to directly reuse of Linux's existing software ecosystem 🐧💪. In this way, we don't need upstream support to run these software on Termix, as long as they have already supported Linux. ❤️‍🩹
 
-Similar to WINE, Termix does not try to emulate or rely on virtualization to run a whole real Linux kernel, instead it provides a minimal Linux system call layer and a Libc replacement to allow loading and executing the program directly and thus natively on supported machines.
+Similar to WINE 🍷, Termix does not try to emulate or rely on virtualization to run a whole real Linux kernel, instead it provides a minimal Linux system call layer and a Libc replacement to allow loading and executing the program directly and thus natively on supported machines. ⏪🚗
 
-Another highlight is support for using native Windows APIs alongside with the Linux ones in Termix is also planned to be added in the future (the idea is inspired by Cygwin), hence the "mix" in the name.
+Another highlight is support for using native Windows APIs alongside with the Linux ones in Termix is also planned to be added in the future 😈 (the idea is inspired by Cygwin), hence the "mix" in the name.
 
 ## Project status
 
