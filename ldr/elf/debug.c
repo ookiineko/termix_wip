@@ -43,29 +43,29 @@ void tmixldr_print_elfinfo(const tmixelf_info *ei) {
 
     printf("stack executable: %s\n", ei->execstack ? "yes" : "no");
 
-    printf("loadable segment count: %ld\n", ei->seg.size);
+    printf("loadable segment count: %ld\n", ei->segs.size);
 
-    printf("post-reloc RO segment count: %ld\n", ei->relro.size);
+    printf("post-reloc RO segment count: %ld\n", ei->relros.size);
 
     int i, j;
 
-    if (ei->seg.size) {
-        if (ei->relro.size) {
-            tmix_chunk *relros = ei->relro.data;
+    if (ei->segs.size) {
+        if (ei->relros.size) {
+            tmix_chunk *relros = ei->relros.data;
 
             assert(relros);
 
-            for (i = 0; i < ei->relro.size; i++) {
+            for (i = 0; i < ei->relros.size; i++) {
                 printf("relro segment #%d:\n", i);
                 printf("  range: " _PTRFMT " to " _PTRFMT "\n", relros[i].off, relros[i].off + relros[i].size);
             }
         }
 
-        tmixelf_seg *si = ei->seg.data;
+        tmixelf_seg *si = ei->segs.data;
 
         assert(si);
 
-        for (i = 0; i < ei->seg.size; i++) {
+        for (i = 0; i < ei->segs.size; i++) {
             printf("loadable segment #%d:\n", i);
             printf("  relative offset: " _PTRFMT "\n", si[i].off);
             if (si[i].file.size)
@@ -86,8 +86,8 @@ void tmixldr_print_elfinfo(const tmixelf_info *ei) {
         }
     }
 
-    if (ei->reloc.size) {
-        assert(ei->reloc.data);
+    if (ei->relocs.size) {
+        assert(ei->relocs.data);
 
         // TODO
     }

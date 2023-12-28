@@ -461,8 +461,8 @@ error:
         if (load_seg_cnt) {
             // at least one loadable segment is found
 
-            ei->seg.data = si;
-            ei->seg.size = j;
+            ei->segs.data = si;
+            ei->segs.size = j;
 
             ei->mem_size = highest_addr;
 
@@ -472,8 +472,8 @@ error:
             if (relro_seg_cnt) {
                 // at least one relro entry is found
 
-                ei->relro.data = relros;
-                ei->relro.size = relro_seg_cnt;
+                ei->relros.data = relros;
+                ei->relros.size = relro_seg_cnt;
             }
         }
 
@@ -487,20 +487,20 @@ error:
 void tmixldr_free_elfinfo(tmixelf_info *ei) {
     // free arrays
 
-    if (ei->seg.data) {
-        free(ei->seg.data);
+    if (ei->segs.data) {
+        free(ei->segs.data);
 
-        ei->seg.data = NULL;
+        ei->segs.data = NULL;
     }
 
-    tmixelf_reloc *ri = ei->reloc.data;  // array
+    tmixelf_reloc *ri = ei->relocs.data;  // array
 
     if (ri) {
         int i;
 
         // free strings, then free array
 
-        for (i = 0; i < ei->reloc.size; i++) {
+        for (i = 0; i < ei->relocs.size; i++) {
             if (ri[i].sym) {
                 free(ri[i].sym);
 
@@ -510,13 +510,13 @@ void tmixldr_free_elfinfo(tmixelf_info *ei) {
 
         free(ri);
 
-        ei->reloc.data = NULL;
+        ei->relocs.data = NULL;
     }
 
-    if (ei->relro.data) {
-        free(ei->relro.data);
+    if (ei->relros.data) {
+        free(ei->relros.data);
 
-        ei->relro.data = NULL;
+        ei->relros.data = NULL;
     }
 }
 

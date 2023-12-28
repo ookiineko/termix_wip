@@ -61,11 +61,11 @@ _tmix_typedef_end(struct, elf_reloc);
  */
 _tmix_typedef(struct, elf_info) {
     size_t entry;  // entrypoint address (relative to the first segment)
-    tmix_array seg;  // array of segment informations (i.e. tmixelf_seg)
+    tmix_array segs;  // array of segment informations (i.e. tmixelf_seg)
     size_t mem_size;  // sum of sizes of all loadable semgents
-    tmix_array reloc;  // array of relocation informations (i.e. tmixelf_reloc)
+    tmix_array relocs;  // array of relocation informations (i.e. tmixelf_reloc)
     bool execstack;  // whether if has an executable stack
-    tmix_array relro;  // array of segments that require changing memory protection to
+    tmix_array relros;  // array of segments that require changing memory protection to
                        // read-only after dynamic linking, each element storing tmix_chunk
 };
 _tmix_typedef_end(struct, elf_info);

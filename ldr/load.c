@@ -46,7 +46,7 @@ int tmixldr_load_elf(int fd, const tmixelf_info *ei, tmixldr_elf *e) {
         return -1;
     }
 
-    if (!ei->seg.size) {
+    if (!ei->segs.size) {
         // no loadable segement??
         return 0;
     }
@@ -65,13 +65,13 @@ int tmixldr_load_elf(int fd, const tmixelf_info *ei, tmixldr_elf *e) {
 
     // setup segments
 
-    tmixelf_seg *si = ei->seg.data;  // array
+    tmixelf_seg *si = ei->segs.data;  // array
 
     assert(si && si[0].off == 0);
 
     int i;
 
-    for (i = 0; i < ei->seg.size; i++) {
+    for (i = 0; i < ei->segs.size; i++) {
         int prot = __conv_prot(si[i].flags);
 
         if (si[i].file.size &&
@@ -98,7 +98,7 @@ quit:
 
 void tmixldr_unload_elf(tmixldr_elf *e, const tmixelf_info *ei) {
     int i;
-    tmixelf_seg *si = ei->seg.data;  // array
+    tmixelf_seg *si = ei->segs.data;  // array
 
     if (!e->base)
         return;  // seems already unloaded

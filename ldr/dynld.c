@@ -41,19 +41,19 @@ int tmixdynld_handle_elf(void *base, const tmixelf_info *ei) {
         return -1;
     }
 
-    if (ei->reloc.size) {
-        assert(ei->reloc.data);
+    if (ei->relocs.size) {
+        assert(ei->relocs.data);
 
         // TODO
     }
 
-    if (ei->relro.size) {
+    if (ei->relros.size) {
         int i;
-        tmix_chunk *relros = ei->relro.data;  // array
+        tmix_chunk *relros = ei->relros.data;  // array
 
         assert(relros);
 
-        for (i = 0; i < ei->relro.size; i++) {
+        for (i = 0; i < ei->relros.size; i++) {
             if (mprotect(base + relros[i].off, relros[i].size, PROT_READ) < 0)
                 return -1;
         }
