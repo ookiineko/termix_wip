@@ -25,9 +25,9 @@
 #include "elf.h"
 
 #ifdef TMIX32
-#define _PTRFMT                "0x%08lx"
+#define _PTRFMT                "%#08lx"
 #elif defined(TMIX64)
-#define _PTRFMT                "0x%016lx"
+#define _PTRFMT                "%#016lx"
 #else
 #error Dont know word size on this platform yet
 #endif
@@ -37,9 +37,9 @@ void tmixelf_print_info(const tmixelf_info *ei) {
         return;
 
     if (ei->entry)
-        printf("entrypoint offset (relative): " _PTRFMT "\n", ei->entry);
+        printf("entrypoint offset (relative): %#lx\n", ei->entry);
 
-    printf("total size in memory when loaded: 0x%lx\n", ei->mem_size);
+    printf("total size in memory when loaded: %#lx\n", ei->mem_size);
 
     printf("stack executable: %s\n", ei->execstack ? "yes" : "no");
 
@@ -71,9 +71,9 @@ void tmixelf_print_info(const tmixelf_info *ei) {
             printf("loadable segment #%d:\n", i);
             printf("  relative offset: " _PTRFMT "\n", si[i].off);
             if (si[i].file.size)
-                printf("  file data size: " _PTRFMT " (at file offset " _PTRFMT ")\n", si[i].file.size, si[i].file.off);
+                printf("  file data size: %#lx (at file offset " _PTRFMT ")\n", si[i].file.size, si[i].file.off);
             if (si[i].pad.size)
-                printf("  zero padding size: " _PTRFMT " (relative offset " _PTRFMT ")\n", si[i].pad.size, si[i].pad.off);
+                printf("  zero padding size: %#lx (relative offset " _PTRFMT ")\n", si[i].pad.size, si[i].pad.off);
 
             if (si[i].flags) {
                 printf("  flags: ");

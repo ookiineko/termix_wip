@@ -250,7 +250,7 @@ error:
                 // compiler information, ignored
                 break;
             default:
-                tmix_fixme("unhandled segment type 0x%x", phdr->p_type);
+                tmix_fixme("unhandled segment type %#x", phdr->p_type);
                 break;
         } /* switch (phdr->p_type) */
     } /* for (i = 0; i < hdr.e_phnum; i++) */

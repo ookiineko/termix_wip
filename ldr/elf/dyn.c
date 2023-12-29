@@ -94,7 +94,7 @@ int _tmixelf_internal_parse_dyn(int fd, const _ElfXX_Phdr *phdr) {
                         // already assumed, ignore
                         break;
                     default:
-                        tmix_fixme("unhandled state flag 0x%lx", _DYN_TAKE_VAL(dyn));
+                        tmix_fixme("unhandled state flag %#lx", _DYN_TAKE_VAL(dyn));
                         break;
                 }
                 break;
@@ -102,7 +102,7 @@ int _tmixelf_internal_parse_dyn(int fd, const _ElfXX_Phdr *phdr) {
                 // placeholder for runtime debug info, ignored
                 break;
             default:
-                tmix_fixme("unhandled dynamic tag 0x%lx", dyn.d_tag);
+                tmix_fixme("unhandled dynamic tag %#lx", dyn.d_tag);
                 break;
         } /* switch (dyn.d_tag) */
 
