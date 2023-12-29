@@ -36,34 +36,14 @@
 
 #include "elf.h"
 
+#include "_types.h"
+
 #ifdef TMIX32
 #define _EXPECTED_EICLASS      (ELFCLASS32)
-#define _EHDR_TYPE             Elf32_Ehdr
-#define _PHDR_TYPE             Elf32_Phdr
-#define _ELFDYN_TYPE           Elf32_Dyn
-#define _ELFSYM_TYPE           Elf32_Sym
-#define _ELFREL_TYPE           Elf32_Rel
-#define _ELFRELA_TYPE          Elf32_Rela
-#define _ELFWORD_TYPE          Elf32_Word
-
-#define _ELF_ST_BIND           ELF32_ST_BIND
-#define _ELF_ST_TYPE           ELF32_ST_TYPE
-#define _ELF_ST_VIS            ELF32_ST_VISIBILITY
 #elif defined(TMIX64)
 #define _EXPECTED_EICLASS      (ELFCLASS64)
-#define _EHDR_TYPE             Elf64_Ehdr
-#define _PHDR_TYPE             Elf64_Phdr
-#define _ELFDYN_TYPE           Elf64_Dyn
-#define _ELFSYM_TYPE           Elf64_Sym
-#define _ELFREL_TYPE           Elf64_Rel
-#define _ELFRELA_TYPE          Elf64_Rela
-#define _ELFWORD_TYPE          Elf64_Word
-
-#define _ELF_ST_BIND           ELF64_ST_BIND
-#define _ELF_ST_TYPE           ELF64_ST_TYPE
-#define _ELF_ST_VIS            ELF64_ST_VISIBILITY
 #else
-#error Dont know ELF types on this platform yet
+#error Dont know ELF class on this platform yet
 #endif
 
 #ifdef __i386__
@@ -96,7 +76,7 @@ static ssize_t __pagesize = -1;
 /*
  * convert ELF segment flags to internal ones
  */
-static inline tmixelf_seg_flag __conv_flags(_ELFWORD_TYPE flags) {
+static inline tmixelf_seg_flag __conv_flags(_ElfXX_Word flags) {
     tmixelf_seg_flag res = 0;
 
     if (flags & PF_R)
@@ -119,9 +99,9 @@ int tmixldr_parse_elf(int fd, tmixelf_info *ei) {
     if (lseek(fd, 0, SEEK_SET) < 0)
         return -1;
 
-    _EHDR_TYPE hdr;
+    _ElfXX_Ehdr hdr;
 
-    if (read(fd, &hdr, sizeof(_EHDR_TYPE)) != sizeof(_EHDR_TYPE)) {
+    if (read(fd, &hdr, sizeof(_ElfXX_Ehdr)) != sizeof(_ElfXX_Ehdr)) {
         // failed to short read
         errno = EIO;
         return -1;
@@ -135,42 +115,22 @@ bad_elf:
         return -1;
     }
 
-    if (hdr.e_ident[EI_CLASS] != _EXPECTED_EICLASS)
-        goto bad_elf;
-
-    if (hdr.e_ident[EI_DATA] != _EXPECTED_EIDATA)
-        goto bad_elf;
-
-    if (hdr.e_ident[EI_VERSION] != EV_CURRENT)
-        goto bad_elf;
-
-    unsigned char osabi = hdr.e_ident[EI_OSABI];
-
-    if (osabi != ELFOSABI_SYSV &&
-        osabi != ELFOSABI_GNU)
-        goto bad_elf;
-
-    if (hdr.e_ident[EI_ABIVERSION] != 0)
-        goto bad_elf;
-
-    if (hdr.e_type != ET_DYN)
-        goto bad_elf;
-
-    if (hdr.e_machine != _EXPECTED_EMACH)
-        goto bad_elf;
-
-    if (hdr.e_version != EV_CURRENT)
-        goto bad_elf;
-
-    if (hdr.e_ehsize != sizeof(_EHDR_TYPE))
-        goto bad_elf;
-
-    if (hdr.e_phentsize != sizeof(_PHDR_TYPE))
+    if (hdr.e_ident[EI_CLASS] != _EXPECTED_EICLASS
+        || hdr.e_ident[EI_DATA] != _EXPECTED_EIDATA
+        || hdr.e_ident[EI_VERSION] != EV_CURRENT
+        || (hdr.e_ident[EI_OSABI] != ELFOSABI_SYSV
+            && hdr.e_ident[EI_OSABI] != ELFOSABI_GNU)
+        || hdr.e_ident[EI_ABIVERSION] != 0
+        || hdr.e_type != ET_DYN
+        || hdr.e_machine != _EXPECTED_EMACH
+        || hdr.e_version != EV_CURRENT
+        || hdr.e_ehsize != sizeof(_ElfXX_Ehdr)
+        || hdr.e_phentsize != sizeof(_ElfXX_Phdr))
         goto bad_elf;
 
     // parse segments
 
-    _PHDR_TYPE *phdrs = NULL;  // array
+    _ElfXX_Phdr *phdrs = NULL;  // array
 
     tmixelf_seg *si = NULL;  // array, optional
     tmix_chunk *relros = NULL;  // array, optional
@@ -181,10 +141,10 @@ bad_elf:
         if (lseek(fd, hdr.e_phoff, SEEK_SET) < 0)
             return -1;
 
-        if (!(phdrs = calloc(hdr.e_phnum, sizeof(_PHDR_TYPE))))
+        if (!(phdrs = calloc(hdr.e_phnum, sizeof(_ElfXX_Phdr))))
             return -1;
 
-        if (read(fd, phdrs, sizeof(_PHDR_TYPE) * hdr.e_phnum) != (sizeof(_PHDR_TYPE) * hdr.e_phnum)) {
+        if (read(fd, phdrs, sizeof(_ElfXX_Phdr) * hdr.e_phnum) != (sizeof(_ElfXX_Phdr) * hdr.e_phnum)) {
             errno = EIO;
 error:
             free(phdrs);
@@ -200,7 +160,7 @@ error:
 
         int i;  // current semgent index
 
-        const _PHDR_TYPE *phdr = NULL;  // current segment header
+        const _ElfXX_Phdr *phdr = NULL;  // current segment header
                                          // set this at the beginning in loops
 
         // but first calculate the required size for arrays
@@ -328,7 +288,7 @@ error:
 
                     // iterate through all entries
 
-                    _ELFDYN_TYPE dyn;
+                    _ElfXX_Dyn dyn;
 
                     size_t strtab_off = 0;
                     size_t strtab_size = 0;
@@ -338,7 +298,7 @@ error:
                     bool rela = false;
 
                     for (;;) {
-                        if (read(fd, &dyn, sizeof(_ELFDYN_TYPE)) != sizeof(_ELFDYN_TYPE))
+                        if (read(fd, &dyn, sizeof(_ElfXX_Dyn)) != sizeof(_ElfXX_Dyn))
                             goto error;
 
                         switch (dyn.d_tag) {
@@ -361,7 +321,7 @@ error:
                                 strtab_size = _DYN_TAKE_VAL(dyn);
                                 break;
                             case DT_SYMENT:
-                                assert(_DYN_TAKE_VAL(dyn) == sizeof(_ELFSYM_TYPE));
+                                assert(_DYN_TAKE_VAL(dyn) == sizeof(_ElfXX_Sym));
                                 break;
                             case DT_SYMTAB:
                                 strtab_off = _DYN_TAKE_PTR(dyn);
