@@ -18,6 +18,8 @@
 #ifndef TERMIX_LOADER_ELF_INTERNAL_TYPES_H
 #define TERMIX_LOADER_ELF_INTERNAL_TYPES_H
 
+#include <gelf.h>
+
 #include "../../inc/arch.h"
 
 #ifdef TMIX32

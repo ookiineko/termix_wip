@@ -102,20 +102,20 @@ _tmix_typedef_end(struct, elf_info);
  *
  * caller should call free_elfinfo once the returned information is no longer used
  */
-int tmixldr_parse_elf(int fd, tmixelf_info *ei);
+int tmixelf_parse_info(int fd, tmixelf_info *ei);
 
 /*
  * to print out the information in an elfinfo buffer
  *
  * for debugging purposes only
  */
-void tmixldr_print_elfinfo(const tmixelf_info *ei);
+void tmixelf_print_info(const tmixelf_info *ei);
 
 /*
  * ei - buffer to free
  *
  * returns 0 if succeed, otherwise -1 and sets errno
  */
-void tmixldr_free_elfinfo(tmixelf_info *ei);
+void tmixelf_free_info(tmixelf_info *ei);
 
 #endif /* TERMIX_LOADER_ELF_H */

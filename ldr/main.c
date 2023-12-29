@@ -73,7 +73,7 @@ usage_and_exit:
         goto exit;
     }
 
-    if (tmixldr_parse_elf(__fd, &__ei) < 0) {
+    if (tmixelf_parse_info(__fd, &__ei) < 0) {
         perror("error parsing ELF");
 
         if (errno == EBADF)
@@ -84,7 +84,7 @@ usage_and_exit:
     }
 
     if (debug)
-        tmixldr_print_elfinfo(&__ei);
+        tmixelf_print_info(&__ei);
 
     if (tmixldr_load_elf(__fd, &__ei, &__e) < 0) {
         perror("error loading ELF");
@@ -131,5 +131,5 @@ __attribute__((destructor)) static void __cleanup(void) {
     if (__e.base)
         tmixldr_unload_elf(&__e, &__ei);
 
-    tmixldr_free_elfinfo(&__ei);
+    tmixelf_free_info(&__ei);
 }

@@ -32,7 +32,7 @@
 #error Dont know word size on this platform yet
 #endif
 
-void tmixldr_print_elfinfo(const tmixelf_info *ei) {
+void tmixelf_print_info(const tmixelf_info *ei) {
     if (!ei)
         return;
 
