@@ -75,7 +75,7 @@ int _tmixelf_internal_parse_segs(int fd, _ElfXX_Ehdr *hdr, tmixelf_internal_segs
     if (!(phdrs = calloc(hdr->e_phnum, sizeof(_ElfXX_Phdr))))
         return -1;
 
-    if (read(fd, phdrs, sizeof(_ElfXX_Phdr) * hdr->e_phnum) != (sizeof(_ElfXX_Phdr) * hdr->e_phnum)) {
+    if (read(fd, phdrs, sizeof(_ElfXX_Phdr) * hdr->e_phnum) != (ssize_t)(sizeof(_ElfXX_Phdr) * hdr->e_phnum)) {
         errno = EIO;
 error:
         // clean up messes before return

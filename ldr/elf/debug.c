@@ -49,7 +49,7 @@ void tmixelf_print_info(const tmixelf_info *ei) {
 
     printf("relocation count: %ld\n", ei->relocs.size);
 
-    int i;
+    size_t i;
 
     if (ei->segs.size) {
         if (ei->relros.size) {
@@ -58,7 +58,7 @@ void tmixelf_print_info(const tmixelf_info *ei) {
             assert(relros);
 
             for (i = 0; i < ei->relros.size; i++) {
-                printf("relro segment #%d:\n", i);
+                printf("relro segment #%ld:\n", i);
                 printf("  range: " _PTRFMT " to " _PTRFMT "\n", relros[i].off, relros[i].off + relros[i].size);
             }
         }
@@ -68,7 +68,7 @@ void tmixelf_print_info(const tmixelf_info *ei) {
         assert(si);
 
         for (i = 0; i < ei->segs.size; i++) {
-            printf("loadable segment #%d:\n", i);
+            printf("loadable segment #%ld:\n", i);
             printf("  relative offset: " _PTRFMT "\n", si[i].off);
             if (si[i].file.size)
                 printf("  file data size: %#lx (at file offset " _PTRFMT ")\n", si[i].file.size, si[i].file.off);
@@ -109,6 +109,6 @@ void tmixelf_print_info(const tmixelf_info *ei) {
         assert(needs);
 
         for (i = 0; i < ei->needs.size; i++)
-            printf("%d: %s\n", i, needs[i]);
+            printf("%ld: %s\n", i, needs[i]);
     }
 }

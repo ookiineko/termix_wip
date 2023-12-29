@@ -39,12 +39,12 @@ int _tmixelf_internal_parse_dyn(int fd, const _ElfXX_Phdr *phdr) {
 
     _ElfXX_Dyn dyn;
 
-    size_t strtab_off = 0;
-    size_t strtab_size = 0;
-    size_t symtab_off = 0;
-    size_t rel_off = 0;
-    size_t rel_size = 0;
-    bool rela = false;
+    __attribute__((unused)) size_t strtab_off = 0;
+    __attribute__((unused)) size_t strtab_size = 0;
+    __attribute__((unused)) size_t symtab_off = 0;
+    __attribute__((unused)) size_t rel_off = 0;
+    __attribute__((unused)) size_t rel_size = 0;
+    __attribute__((unused)) bool rela = false;
 
     for (;;) {
         if (read(fd, &dyn, sizeof(_ElfXX_Dyn)) != sizeof(_ElfXX_Dyn))
@@ -73,7 +73,7 @@ int _tmixelf_internal_parse_dyn(int fd, const _ElfXX_Phdr *phdr) {
                 assert(_DYN_TAKE_VAL(dyn) == sizeof(_ElfXX_Sym));
                 break;
             case DT_SYMTAB:
-                strtab_off = _DYN_TAKE_PTR(dyn);
+                symtab_off = _DYN_TAKE_PTR(dyn);
                 break;
             case DT_PLTGOT:
                 // unused by us for now

@@ -47,7 +47,7 @@ int tmixdynld_handle_elf(void *base, const tmixelf_info *ei) {
     }
 
     if (ei->relros.size) {
-        int i;
+        size_t i;
         tmix_chunk *relros = ei->relros.data;  // array
 
         assert(relros);

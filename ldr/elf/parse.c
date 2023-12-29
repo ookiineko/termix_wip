@@ -142,7 +142,7 @@ void tmixelf_free_info(tmixelf_info *ei) {
     tmixelf_reloc *ri = ei->relocs.data;  // array
 
     if (ri) {
-        int i;
+        size_t i;
 
         // free strings, then free array
 

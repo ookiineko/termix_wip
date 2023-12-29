@@ -69,7 +69,7 @@ int tmixldr_load_elf(int fd, const tmixelf_info *ei, tmixldr_elf *e) {
 
     assert(si && si[0].off == 0);
 
-    int i;
+    size_t i;
 
     for (i = 0; i < ei->segs.size; i++) {
         int prot = __conv_prot(si[i].flags);
@@ -97,9 +97,6 @@ quit:
 }
 
 void tmixldr_unload_elf(tmixldr_elf *e, const tmixelf_info *ei) {
-    int i;
-    tmixelf_seg *si = ei->segs.data;  // array
-
     if (!e->base)
         return;  // seems already unloaded
 
