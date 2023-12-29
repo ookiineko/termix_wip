@@ -29,13 +29,12 @@
 
 #include "dynld.h"
 
-// FIXME: Set to libc path
-#define _HOSTLIB_PATH               "../share/termix/tests/tmixhostlib.dll"
+#define _LIBC_PATH               "../share/termix/tests/tmixfakelibc.dll"
 
-static void *__hostlib = NULL;
+static void *__libc = NULL;
 
 int tmixdynld_handle_elf(void *base, const tmixelf_info *ei) {
-    if (!__hostlib) {
+    if (!__libc) {
         // dylib handle was failed to open
         errno = EAGAIN;
         return -1;
@@ -62,36 +61,36 @@ int tmixdynld_handle_elf(void *base, const tmixelf_info *ei) {
     return 0;
 }
 
-__attribute__((constructor)) static void __init_hostlib(void) {
+__attribute__((constructor)) static void __init_libc(void) {
     if (!_tmix_progdir)
         return;  // sth went wrong at startup
 
-    char *hostlib_path = _tmix_join_path(_tmix_progdir, _HOSTLIB_PATH);
+    char *libc_path = _tmix_join_path(_tmix_progdir, _LIBC_PATH);
 
-    if (!hostlib_path) {
+    if (!libc_path) {
         // maybe memory error
-        perror("error concatenating path for hostlib");
+        perror("error concatenating path for libc");
 
         return;
     }
 
-    __hostlib = dlopen(hostlib_path, RTLD_LAZY);
+    __libc = dlopen(libc_path, RTLD_LAZY);
 
-    if (!__hostlib) {
+    if (!__libc) {
         const char *err = dlerror();
 
         if (err)
             fprintf(stderr, "error while opening shared library: %s\n", err);
         else
-            fprintf(stderr, "unknown error while opening shared library %s\n", hostlib_path);  // how
+            fprintf(stderr, "unknown error while opening shared library %s\n", libc_path);  // how
     }
 
-    free(hostlib_path);
+    free(libc_path);
 }
 
-__attribute__((destructor)) static void __destroy_hostlib(void) {
-    if (__hostlib) {
-        dlclose(__hostlib);
-        __hostlib = NULL;
+__attribute__((destructor)) static void __destroy_libc(void) {
+    if (__libc) {
+        dlclose(__libc);
+        __libc = NULL;
     }
 }

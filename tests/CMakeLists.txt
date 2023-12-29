@@ -1,9 +1,9 @@
 set(TMIXTEST_INSTALL_DATADIR "${TERMIX_INSTALL_DATADIR}/tests")
 
-add_library(hostlib SHARED
+add_library(fakelibc SHARED
     lib/hello.c)
 
-install(TARGETS hostlib
+install(TARGETS fakelibc
         LIBRARY DESTINATION ${TMIXTEST_INSTALL_DATADIR})
 
 # test ELFs compiled on Linux
@@ -11,7 +11,7 @@ if (LINUX)
     add_executable(hello_standalone
         hello_main.c)
     target_link_libraries(hello_standalone
-        hostlib)
+        fakelibc)
     target_link_options(hello_standalone PRIVATE
         -nostdlib
         -Wl,-rpath=$ORIGIN)
