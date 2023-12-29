@@ -18,8 +18,28 @@
 #ifndef TERMIX_LOADER_ELF_INTERNAL_DYN_H
 #define TERMIX_LOADER_ELF_INTERNAL_DYN_H
 
+#include "../../inc/macros.h"
+#include "../../inc/types.h"
+
 #include "_types.h"
 
-int _tmixelf_internal_parse_dyn(int fd, const _ElfXX_Phdr *phdr);
+/*
+ * initialize this struct with zero
+ *
+ * values stored in this struct should be moved to a tmixelf_info
+ */
+_tmix_typedef(struct, elf_internal_dyn) {
+    tmix_array relocs;  // array, optional
+    tmix_array needs;  // array, optional
+};
+_tmix_typedef_end(struct, elf_internal_dyn);
+
+/*
+ * returns 0 if success, otherwise -1 and sets errno
+ *
+ * if this function fails, no memory need to be freed, but eid might get modified
+ * otherwise eid might be populated, caller should take the ownership of the data inside it
+ */
+int _tmixelf_internal_parse_dyn(int fd, const _ElfXX_Phdr *phdr, tmixelf_internal_dyn *eid);
 
 #endif /* TERMIX_LOADER_ELF_INTERNAL_DYN_H */

@@ -125,6 +125,11 @@ bad_elf:
 
         if (eis.execstack)
             ei->execstack = eis.execstack;
+
+        if (eis.needs.size) {
+            ei->needs.data = eis.needs.data;
+            ei->needs.size = eis.needs.size;
+        }
     }
 
     return 0;

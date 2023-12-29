@@ -221,11 +221,19 @@ error:
 
                 break;
             } /* case PT_LOAD */
-            case PT_DYNAMIC:
-                if (_tmixelf_internal_parse_dyn(fd, phdr) < 0)
+            case PT_DYNAMIC: {
+                tmixelf_internal_dyn eid = {};
+
+                if (_tmixelf_internal_parse_dyn(fd, phdr, &eid) < 0)
                     goto error;
 
+                if (eid.needs.size) {
+                    eis->needs.data = eid.needs.data;
+                    eis->needs.size = eid.needs.size;
+                }
+
                 break;
+            }
             case PT_GNU_RELRO: {
                 // populate relro information
 

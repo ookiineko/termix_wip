@@ -108,7 +108,9 @@ void tmixelf_print_info(const tmixelf_info *ei) {
 
         assert(needs);
 
-        for (i = 0; i < ei->needs.size; i++)
+        for (i = 0; i < ei->needs.size; i++) {
+            assert(needs[i]);
             printf("%ld: %s\n", i, needs[i]);
+        }
     }
 }

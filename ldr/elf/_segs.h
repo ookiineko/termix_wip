@@ -36,6 +36,7 @@ _tmix_typedef(struct, elf_internal_segs) {
     tmix_array relros;  // data is optional
     size_t highest_addr;
     bool execstack;
+    tmix_array needs;  // data is optional
 };
 _tmix_typedef_end(struct, elf_internal_segs);
 
