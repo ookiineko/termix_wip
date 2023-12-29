@@ -52,7 +52,7 @@ int _tmixelf_internal_parse_dyn(int fd, const _ElfXX_Phdr *phdr) {
 
         switch (dyn.d_tag) {
             case DT_NULL:
-                // end of array, handled below
+                // end of table, handled below
                 break;
             case DT_NEEDED:
                 // TODO: put this info into actual use when needed
@@ -107,7 +107,7 @@ int _tmixelf_internal_parse_dyn(int fd, const _ElfXX_Phdr *phdr) {
         } /* switch (dyn.d_tag) */
 
         if (dyn.d_tag == DT_NULL)
-            break;
+            break;  // end of table, stop
     } /* for (;;) */
 
     // TODO: iterate through relocation table
