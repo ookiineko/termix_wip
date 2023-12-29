@@ -34,13 +34,11 @@
 
 #include "elf.h"
 
+#include "_dyn.h"
 #include "_segs.h"
 #include "_types.h"
 
 #define _ROUND_DOWN(_x, _align)   ((_x / _align) * _align)
-
-#define _DYN_TAKE_PTR(_dyn)       (_dyn.d_un.d_ptr)
-#define _DYN_TAKE_VAL(_dyn)       (_dyn.d_un.d_val)
 
 static ssize_t __pagesize = -1;
 
@@ -230,85 +228,8 @@ error:
             } /* case PT_LOAD */
 
             case PT_DYNAMIC: {
-                if (lseek(fd, phdr->p_offset, SEEK_SET) < 0)
+                if (_tmixelf_internal_parse_dyn(fd, phdr) < 0)
                     goto error;
-
-                // iterate through all entries
-
-                _ElfXX_Dyn dyn;
-
-                size_t strtab_off = 0;
-                size_t strtab_size = 0;
-                size_t symtab_off = 0;
-                size_t rel_off = 0;
-                size_t rel_size = 0;
-                bool rela = false;
-
-                for (;;) {
-                    if (read(fd, &dyn, sizeof(_ElfXX_Dyn)) != sizeof(_ElfXX_Dyn))
-                        goto error;
-
-                    switch (dyn.d_tag) {
-                        case DT_NULL:
-                            // end of array, handled below
-                            break;
-                        case DT_NEEDED:
-                            // TODO: put this info into actual use when needed
-                            break;
-                        case DT_RUNPATH:
-                            // rpath, currently unused by us
-                            break;
-                        case DT_GNU_HASH:
-                            // TODO: put this info into actual use when needed
-                            break;
-                        case DT_STRTAB:
-                            strtab_off = _DYN_TAKE_PTR(dyn);
-                            break;
-                        case DT_STRSZ:
-                            strtab_size = _DYN_TAKE_VAL(dyn);
-                            break;
-                        case DT_SYMENT:
-                            assert(_DYN_TAKE_VAL(dyn) == sizeof(_ElfXX_Sym));
-                            break;
-                        case DT_SYMTAB:
-                            strtab_off = _DYN_TAKE_PTR(dyn);
-                            break;
-                        case DT_PLTGOT:
-                            // unused by us for now
-                            break;
-                        case DT_PLTRELSZ:
-                            rel_size = _DYN_TAKE_VAL(dyn);
-                            break;
-                        case DT_PLTREL:
-                            rela = _DYN_TAKE_VAL(dyn) == DT_RELA;
-                            break;
-                        case DT_JMPREL:
-                            // location of relocation entries
-                            rel_off = _DYN_TAKE_PTR(dyn);
-                            break;
-                        case DT_FLAGS_1:
-                            switch (_DYN_TAKE_VAL(dyn)) {
-                                case DF_1_PIE:
-                                    // already assumed, ignore
-                                    break;
-                                default:
-                                    tmix_fixme("unhandled state flag 0x%lx", _DYN_TAKE_VAL(dyn));
-                                    break;
-                            }
-                            break;
-                        case DT_DEBUG:
-                            // placeholder for runtime debug info, ignored
-                            break;
-                        default:
-                            tmix_fixme("unhandled dynamic tag 0x%lx", dyn.d_tag);
-                            break;
-                    } /* switch (dyn.d_tag) */
-
-                    if (dyn.d_tag == DT_NULL)
-                        break;
-                } /* for (;;) */
-
-                // TODO: iterate through relocation table
 
                 break;
             } /* case PT_DYNAMIC */
