@@ -146,11 +146,6 @@ error:
         phdr = &phdrs[i];
 
         switch (phdr->p_type) {
-            case PT_PHDR: {
-                // the program header table itself, skipping
-                break;
-            }
-
             case PT_LOAD: {
                 if (!phdr->p_memsz)
                     continue;  // wat
@@ -226,14 +221,11 @@ error:
 
                 break;
             } /* case PT_LOAD */
-
-            case PT_DYNAMIC: {
+            case PT_DYNAMIC:
                 if (_tmixelf_internal_parse_dyn(fd, phdr) < 0)
                     goto error;
 
                 break;
-            } /* case PT_DYNAMIC */
-
             case PT_GNU_RELRO: {
                 // populate relro information
 
@@ -246,27 +238,20 @@ error:
 
                 break;
             }
-
-            case PT_INTERP: {
-                // path to dynamic linker, ignored
-                break;
-            }
-
-            case PT_GNU_STACK: {
+            case PT_GNU_STACK:
                 assert(!eis->execstack);
                 eis->execstack = !!(__conv_flags(phdr->p_flags) & TMIXELF_SEG_EXEC);
                 break;
-            }
-
-            case PT_NOTE: {
+            case PT_PHDR:
+                // the program header table itself, skipping
+            case PT_INTERP:
+                // path to dynamic linker, ignored
+            case PT_NOTE:
                 // compiler information, ignored
                 break;
-            }
-
-            default: {
+            default:
                 tmix_fixme("unhandled segment type 0x%x", phdr->p_type);
                 break;
-            }
         } /* switch (phdr->p_type) */
     } /* for (i = 0; i < hdr.e_phnum; i++) */
 
