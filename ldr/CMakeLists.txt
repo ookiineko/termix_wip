@@ -1,17 +1,21 @@
-pkg_search_module(libelf REQUIRED libelf)
+add_subdirectory(elf)
+
+add_library(ldr SHARED
+    dynld.c
+    load.c)
+target_link_libraries(ldr
+    commonhelpers
+    elf)
 
 add_executable(tmixldr
-    dynld.c
-    elf/debug.c
-    elf/parse.c
-    load.c
     main.c)
 if (NOT (WIN32 OR CYGWIN))
     target_link_options(tmixldr PRIVATE
         -Wl,-rpath=$ORIGIN/../lib)
 endif()
 target_link_libraries(tmixldr
-    commonhelpers)
+    ldr)
 
-install(TARGETS tmixldr
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS ldr tmixldr
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
