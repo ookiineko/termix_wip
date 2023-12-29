@@ -120,8 +120,10 @@ bad_elf:
         || hdr.e_ident[EI_VERSION] != EV_CURRENT
         || (hdr.e_ident[EI_OSABI] != ELFOSABI_SYSV
             && hdr.e_ident[EI_OSABI] != ELFOSABI_GNU)
-        || hdr.e_ident[EI_ABIVERSION] != 0
-        || hdr.e_type != ET_DYN
+        || hdr.e_ident[EI_ABIVERSION] != 0)
+        goto bad_elf;
+
+    if (hdr.e_type != ET_DYN
         || hdr.e_machine != _EXPECTED_EMACH
         || hdr.e_version != EV_CURRENT
         || hdr.e_ehsize != sizeof(_ElfXX_Ehdr)
