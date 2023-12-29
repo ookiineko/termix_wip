@@ -4,7 +4,7 @@ add_library(ldr SHARED
     dynld.c
     load.c)
 target_link_libraries(ldr
-    commonhelpers
+    common
     elf)
 
 add_executable(tmixldr

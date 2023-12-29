@@ -1,5 +1,5 @@
-add_library(commonhelpers SHARED
+add_library(common SHARED
     paths.c)
 
-install(TARGETS commonhelpers
+install(TARGETS common
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
