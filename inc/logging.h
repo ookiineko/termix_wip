@@ -20,6 +20,6 @@
 
 #include <stdio.h>
 
-#define tmix_fixme(_fmt, ...)     fprintf(stderr, "fixme: " _fmt "\n", __VA_ARGS__)
+#define tmix_fixme(_fmt, ...)     fprintf(stderr, "tmix_fixme: " _fmt "\n", __VA_ARGS__)
 
 #endif /* TERMIX_COMMON_INCLUDE_LOGGING_H */
