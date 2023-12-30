@@ -21,6 +21,7 @@
 #include <sys/types.h>
 
 #include "../../inc/arch.h"
+#include "../../inc/types.h"
 
 #include "elf.h"
 

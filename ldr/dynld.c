@@ -25,6 +25,7 @@
 #include <sys/mman.h>
 
 #include "../inc/paths.h"
+#include "../inc/types.h"
 
 #include "elf/elf.h"
 
