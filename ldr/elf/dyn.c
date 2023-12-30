@@ -30,6 +30,7 @@
 #include "_types.h"
 
 #include "_dyn.h"
+#include "_reloc.h"
 
 #define _DYN_TAKE_PTR(_dyn)       ((_dyn).d_un.d_ptr)
 #define _DYN_TAKE_VAL(_dyn)       ((_dyn).d_un.d_val)
@@ -45,6 +46,7 @@ int _tmixelf_internal_parse_dyn(int fd, const _ElfXX_Phdr *phdr, tmixelf_interna
     size_t strtab_off = 0;
     size_t strtab_size = 0;
     size_t symtab_off = 0;
+    size_t hashtab_off = 0;
     size_t rel_off = 0;
     size_t rel_size = 0;
     bool rela = false;
@@ -69,7 +71,7 @@ int _tmixelf_internal_parse_dyn(int fd, const _ElfXX_Phdr *phdr, tmixelf_interna
                 // rpath, currently unused by us
                 break;
             case DT_GNU_HASH:
-                // TODO: put this info into actual use when needed
+                hashtab_off = _DYN_TAKE_PTR(dyn);
                 break;
             case DT_STRTAB:
                 strtab_off = _DYN_TAKE_PTR(dyn);
@@ -218,11 +220,28 @@ error:
         eid->needs.size = needed_shlib_count;
     }
 
-    // TODO: iterate through relocation table
-    (void)symtab_off;
-    (void)rel_off;
-    (void)rel_size;
-    (void)rela;
+    // next
+
+    assert(hashtab_off);
+
+    tmixelf_internal_reloc eir = {
+        .strtab = strtab,
+        .symtab_off = symtab_off,
+        .hashtab_off = hashtab_off,
+        .rel_off = rel_off,
+        .rel_size = rel_size,
+        .rela = rela,
+    };
+
+    if (_tmixelf_internal_parse_reloc(fd, &eir) < 0)
+        goto error;
+
+    if (eir.relocs.size) {
+        // at least one relocation entry is found
+
+        eid->relocs.data = eir.relocs.data;
+        eid->relocs.size = eir.relocs.size;
+    }
 
     // finally...
     if (strtab)

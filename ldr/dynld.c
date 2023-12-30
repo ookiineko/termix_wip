@@ -18,6 +18,7 @@
 #include <assert.h>
 #include <dlfcn.h>
 #include <errno.h>
+#include <inttypes.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,14 +41,30 @@ int tmixdynld_handle_elf(void *base, const tmixelf_info *ei) {
         return -1;
     }
 
-    if (ei->relocs.size) {
-        assert(ei->relocs.data);
+    size_t i;
 
-        // TODO
+    if (ei->relocs.size) {
+        tmixelf_reloc *relocs = ei->relocs.data;
+
+        assert(relocs);
+
+        for (i = 0; i < ei->relocs.size; i++) {
+            // FIXME: support other shlibs
+            void *the_sym = dlsym(__libc, relocs[i].sym.name);
+
+            if (!the_sym) {
+                fprintf(stderr, "missing symbol to relocate: %s\n", relocs[i].sym.name);
+                errno = EAGAIN;
+                return -1;
+            }
+
+            intptr_t *ptr = (intptr_t *)((char *)base + relocs[i].off);
+
+            *ptr = (intptr_t)the_sym;
+        }
     }
 
     if (ei->relros.size) {
-        size_t i;
         tmix_chunk *relros = ei->relros.data;  // array
 
         assert(relros);

@@ -4,7 +4,8 @@ add_library(elf SHARED
     debug.c
     dyn.c
     parse.c
-    segs.c)
+    segs.c
+    reloc.c)
 
 install(TARGETS elf
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
