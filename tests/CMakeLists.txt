@@ -4,6 +4,7 @@ add_library(fakelibc SHARED
     lib/hello.c)
 
 install(TARGETS fakelibc
+        RUNTIME DESTINATION ${TMIXTEST_INSTALL_DATADIR}
         LIBRARY DESTINATION ${TMIXTEST_INSTALL_DATADIR})
 
 # test ELFs compiled on Linux
