@@ -19,6 +19,7 @@
 #define TERMIX_LOADER_ELF_H
 
 #include <stdbool.h>
+#include <sys/types.h>
 
 #include "../../inc/macros.h"
 #include "../../inc/types.h"
