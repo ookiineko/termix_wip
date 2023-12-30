@@ -97,7 +97,7 @@ void tmixelf_print_info(const tmixelf_info *ei) {
         printf("relocations:\n");
 
         for (i = 0; i < ei->relocs.size; i++)
-            printf("  " _PTRFMT "%s (%s)\n", relocs[i].off, relocs[i].sym.name,
+            printf("  " _PTRFMT " %s (%s)\n", relocs[i].off, relocs[i].sym.name,
                         relocs[i].sym.type == TMIXELF_SYM_DATA ? "data" : (
                             relocs[i].sym.type == TMIXELF_SYM_FUNC ? "function" : "unknown"));
     }

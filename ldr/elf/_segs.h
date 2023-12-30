@@ -37,6 +37,7 @@ _tmix_typedef(struct, elf_internal_segs) {
     size_t highest_addr;
     bool execstack;
     tmix_array needs;  // data is optional
+    tmix_array relocs;  // data is optional
 };
 _tmix_typedef_end(struct, elf_internal_segs);
 

@@ -232,6 +232,11 @@ error:
                     eis->needs.size = eid.needs.size;
                 }
 
+                if (eid.relocs.size) {
+                    eis->relocs.data = eid.relocs.data;
+                    eis->relocs.size = eid.relocs.size;
+                }
+
                 break;
             }
             case PT_GNU_RELRO: {

@@ -130,6 +130,11 @@ bad_elf:
             ei->needs.data = eis.needs.data;
             ei->needs.size = eis.needs.size;
         }
+
+        if (eis.relocs.size) {
+            ei->relocs.data = eis.relocs.data;
+            ei->relocs.size = eis.relocs.size;
+        }
     }
 
     return 0;
