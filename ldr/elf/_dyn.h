@@ -21,7 +21,7 @@
 #include "../../inc/macros.h"
 #include "../../inc/types.h"
 
-#include "_types.h"
+#include "_arch.h"
 
 /*
  * initialize this struct with zero

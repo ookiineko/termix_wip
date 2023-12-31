@@ -1,5 +1,5 @@
 /*
-  _types.h - ELF types
+  _arch.h - ELF architectures
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -15,12 +15,12 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TERMIX_LOADER_ELF_INTERNAL_TYPES_H
-#define TERMIX_LOADER_ELF_INTERNAL_TYPES_H
-
-#include <gelf.h>
+#ifndef TERMIX_LOADER_ELF_INTERNAL_ARCH_H
+#define TERMIX_LOADER_ELF_INTERNAL_ARCH_H
 
 #include "../../inc/arch.h"
+
+#include "_elf.h"
 
 #ifdef TMIX32
 #define _ElfXX_Ehdr             Elf32_Ehdr
@@ -50,4 +50,4 @@
 #error Dont know ELF types on this platform yet
 #endif
 
-#endif /* TERMIX_LOADER_ELF_INTERNAL_TYPES_H */
+#endif /* TERMIX_LOADER_ELF_INTERNAL_ARCH_H */

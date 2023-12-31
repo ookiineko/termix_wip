@@ -21,8 +21,6 @@ include(GNUInstallDirs)
 
 set(TERMIX_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/termix")
 
-find_package(PkgConfig REQUIRED)
-
 add_compile_options(-Wall -Wextra -Werror)
 
 add_subdirectory(common)

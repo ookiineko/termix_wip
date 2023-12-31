@@ -23,11 +23,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <gelf.h>
-
 #include "../../inc/logging.h"
 
-#include "_types.h"
+#include "_arch.h"
+#include "_elf.h"
 
 #include "_dyn.h"
 #include "_reloc.h"

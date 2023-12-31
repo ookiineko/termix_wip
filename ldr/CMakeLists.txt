@@ -9,10 +9,6 @@ target_link_libraries(ldr
 
 add_executable(tmixldr
     main.c)
-if (NOT (WIN32 OR CYGWIN))
-    target_link_options(tmixldr PRIVATE
-        -Wl,-rpath=$ORIGIN/../lib)
-endif()
 target_link_libraries(tmixldr
     ldr)
 

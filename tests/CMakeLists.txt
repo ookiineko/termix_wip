@@ -14,8 +14,7 @@ if (LINUX)
     target_link_libraries(hello_standalone
         fakelibc)
     target_link_options(hello_standalone PRIVATE
-        -nostdlib
-        -Wl,-rpath=$ORIGIN)
+        -nostdlib)
 
     # for early tests w/o dynamic linker
     add_executable(hello_bare

@@ -29,8 +29,9 @@
 
 #include "elf.h"
 
+#include "_arch.h"
+#include "_elf.h"
 #include "_segs.h"
-#include "_types.h"
 
 #ifdef TMIX32
 #define _EXPECTED_EICLASS      (ELFCLASS32)

@@ -1,5 +1,3 @@
-pkg_search_module(libelf REQUIRED libelf)
-
 add_library(elf SHARED
     dyn.c
     info.c

@@ -34,9 +34,10 @@
 
 #include "elf.h"
 
+#include "_arch.h"
+#include "_elf.h"
 #include "_dyn.h"
 #include "_segs.h"
-#include "_types.h"
 
 #define _ROUND_DOWN(_x, _align)   ((_x / _align) * _align)
 
