@@ -38,8 +38,8 @@ typedef enum {
 typedef struct {
     size_t off;  // offset relative to the first segment
     tmix_chunk file;  // file offset and size of reference data
-    tmix_chunk pad;  // size and offset relative to the start of this segment for zero paddings
-                     // empty if no explicit zero padding required
+    tmix_chunk pad;  /* size and offset relative to the start of this segment for zero paddings
+                        empty if no explicit zero padding required */
     tmixelf_seg_flag flags;  // protection flags for this segment
 } tmixelf_seg;
 
@@ -80,8 +80,8 @@ typedef struct {
     size_t mem_size;  // sum of sizes of all loadable semgents
     tmix_array relocs;  // array of relocation informations (i.e. tmixelf_reloc)
     bool execstack;  // whether if has an executable stack
-    tmix_array relros;  // array of segments that require changing memory protection to
-                       // read-only after dynamic linking, each element storing tmix_chunk
+    tmix_array relros;  /* array of segments that require changing memory protection to
+                           read-only after dynamic linking, each element storing tmix_chunk */
     tmix_array needs;  // list of depended shared library names
 } tmixelf_info;
 
