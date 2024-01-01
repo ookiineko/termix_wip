@@ -247,22 +247,22 @@ void tmixelf_free_info(tmixelf_info *ei) {
         ei->segs.data = NULL;
     }
 
-    tmixelf_reloc *ri = ei->relocs.data;  // array
+    tmixelf_reloc *relocs = ei->relocs.data;  // array
 
-    if (ri) {
+    if (relocs) {
         size_t i;
 
         // free strings, then free array
 
         for (i = 0; i < ei->relocs.size; i++) {
-            if (ri[i].sym.name) {
-                free(ri[i].sym.name);
+            if (relocs[i].sym.name) {
+                free(relocs[i].sym.name);
 
-                ri[i].sym.name = NULL;
+                relocs[i].sym.name = NULL;
             }
         }
 
-        free(ri);
+        free(relocs);
 
         ei->relocs.data = NULL;
     }
