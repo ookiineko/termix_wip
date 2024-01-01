@@ -171,14 +171,11 @@ error:
     if (needed_shlib_count) {
         // at least one needed shlib is found
 
-        assert(dyn_ent_count);
         assert(dyns);
         assert(strtab);
 
         if (!(needs = calloc(needed_shlib_count, sizeof(char *))))
             goto error;
-
-        memset(needs, 0, needed_shlib_count * sizeof(char *));
 
         size_t i;
         size_t j = 0;  // index of current needed shlib
@@ -199,7 +196,7 @@ error:
                 assert(name_len);
 
                 // copy it to array
-                char *name_buff = malloc(name_len);
+                char *name_buff = malloc(name_len + 1);
 
                 if (!name_buff) {
                     // free up messes before return
