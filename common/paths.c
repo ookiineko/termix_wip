@@ -26,6 +26,9 @@
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#elif defined(__APPLE__)
+#include <stdint.h>
+#include <mach-o/dyld.h>  // for _NSGetExecutablePath
 #else
 #include <unistd.h>  // for readlink
 #endif
@@ -60,6 +63,13 @@ __attribute__((constructor)) static void __init_progdir(void) {
         // TODO: use FormatMessage to print human readable error message
         fprintf(stderr, "error getting self location: WinError %ld\n", GetLastError());
 
+        return;
+    }
+#elif defined(__APPLE__)
+    uint32_t buff_size = sizeof(__progdir_buff);
+
+    if (!_NSGetExecutablePath(__progdir_buff, &buff_size)) {
+        fprintf(stderr, "unknown error getting self location\n");
         return;
     }
 #else
