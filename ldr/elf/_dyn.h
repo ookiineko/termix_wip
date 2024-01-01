@@ -29,6 +29,7 @@
  */
 typedef struct {
     tmix_array relocs;  // array, optional
+    tmix_array syms;  // array, optional
     tmix_array needs;  // array, optional
 } tmixelf_internal_dyn;
 

@@ -1,5 +1,5 @@
 /*
-  _reloc.h - ELF relocation information
+  _reloc.h - ELF symbol table
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -15,8 +15,8 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TERMIX_LOADER_ELF_INTERNAL_RELOC_H
-#define TERMIX_LOADER_ELF_INTERNAL_RELOC_H
+#ifndef TERMIX_LOADER_ELF_INTERNAL_SYMTAB_H
+#define TERMIX_LOADER_ELF_INTERNAL_SYMTAB_H
 
 #include <stdbool.h>
 #include <sys/types.h>
@@ -26,7 +26,7 @@
 /*
  * initialize this struct with zero
  *
- * data stored in the relocs field should be moved to a tmixelf_info
+ * data stored in the last two fields should be moved to a tmixelf_info
  */
 typedef struct {
     const char *strtab;
@@ -35,17 +35,18 @@ typedef struct {
     size_t rel_off;
     size_t rel_size;
     bool rela;
+    tmix_array syms;  // array, optional
     tmix_array relocs;  // array, optional
-} tmixelf_internal_reloc;
+} tmixelf_internal_symtab;
 
 /*
- * caller should fill the fields in eir as argument and set the relocs field to zero
+ * caller should fill the fields in eist as argument and set the last two fields to zero
  *
  * returns 0 if success, otherwise -1 and sets errno
  *
- * if this function fails, no memory need to be freed, but eir might get modified
- * otherwise the relocs field might be populated, caller should take the ownership of the data inside it
+ * if this function fails, no memory need to be freed, but eist might get modified
+ * otherwise the last two fields might be populated, caller should take the ownership of the data inside it
  */
-int _tmixelf_internal_parse_reloc(int fd, tmixelf_internal_reloc *eir);
+int _tmixelf_internal_parse_symtab(int fd, tmixelf_internal_symtab *eist);
 
-#endif /* TERMIX_LOADER_ELF_INTERNAL_RELOC_H */
+#endif /* TERMIX_LOADER_ELF_INTERNAL_SYMTAB_H */

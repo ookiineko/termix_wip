@@ -145,9 +145,14 @@ bad_elf:
             ei->needs.size = eis.needs.size;
         }
 
-        if (eis.relocs.size) {
-            ei->relocs.data = eis.relocs.data;
-            ei->relocs.size = eis.relocs.size;
+        if (eis.syms.size) {
+            ei->syms.data = eis.syms.data;
+            ei->syms.size = eis.syms.size;
+
+            if (eis.relocs.size) {
+                ei->relocs.data = eis.relocs.data;
+                ei->relocs.size = eis.relocs.size;
+            }
         }
     }
 
@@ -211,17 +216,47 @@ void tmixelf_print_info(const tmixelf_info *ei) {
         }
     }
 
-    if (ei->relocs.size) {
+    if (ei->syms.size) {
+        tmixelf_sym *syms = ei->syms.data;
+        assert(syms);
 
-        tmixelf_reloc *relocs = ei->relocs.data;
-        assert(relocs);
+        printf("symbols:\n");
 
-        printf("relocations:\n");
+        for (i = 0; i < ei->syms.size; i++) {
+            printf("  " _PTRFMT " %s (", syms[i].off, syms[i].name);
 
-        for (i = 0; i < ei->relocs.size; i++)
-            printf("  " _PTRFMT " %s (%s)\n", relocs[i].off, relocs[i].sym.name,
-                        relocs[i].sym.type == TMIXELF_SYM_DATA ? "data" : (
-                            relocs[i].sym.type == TMIXELF_SYM_FUNC ? "function" : "unknown"));
+            switch(syms[i].type) {
+                case TMIXELF_SYM_DATA:
+                    printf("data");
+                    break;
+                case TMIXELF_SYM_FUNC:
+                    printf("function");
+                    break;
+                default:
+                    printf("unknown");
+                    break;
+            }
+
+            printf(") ");
+
+            if (syms[i].imported)
+                printf("(external) ");
+
+            printf("\n");
+        }
+
+        if (ei->relocs.size) {
+            tmixelf_reloc *relocs = ei->relocs.data;
+            assert(relocs);
+
+            printf("relocations:\n");
+
+            for (i = 0; i < ei->relocs.size; i++) {
+                tmixelf_sym *sym = &syms[relocs[i].symidx];
+
+                printf("  " _PTRFMT " %s\n", relocs[i].off, sym->name);
+            }
+        }
     }
 
     if (ei->needs.size) {
@@ -247,24 +282,24 @@ void tmixelf_free_info(tmixelf_info *ei) {
         ei->segs.data = NULL;
     }
 
-    tmixelf_reloc *relocs = ei->relocs.data;  // array
+    tmixelf_sym *syms = ei->syms.data;  // array
 
-    if (relocs) {
+    if (syms) {
         size_t i;
 
         // free strings, then free array
 
-        for (i = 0; i < ei->relocs.size; i++) {
-            if (relocs[i].sym.name) {
-                free(relocs[i].sym.name);
+        for (i = 0; i < ei->syms.size; i++) {
+            if (syms[i].name) {
+                free(syms[i].name);
 
-                relocs[i].sym.name = NULL;
+                syms[i].name = NULL;
             }
         }
 
-        free(relocs);
+        free(syms);
 
-        ei->relocs.data = NULL;
+        ei->syms.data = NULL;
     }
 
     if (ei->relros.data) {
@@ -277,5 +312,11 @@ void tmixelf_free_info(tmixelf_info *ei) {
         free(ei->needs.data);
 
         ei->needs.data = NULL;
+    }
+
+    if (ei->relocs.data) {
+        free(ei->relocs.data);
+
+        ei->relocs.data = NULL;
     }
 }

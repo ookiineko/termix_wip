@@ -29,7 +29,7 @@
 #include "_elf.h"
 
 #include "_dyn.h"
-#include "_reloc.h"
+#include "_symtab.h"
 
 #define _DYN_TAKE_PTR(_dyn)       ((_dyn).d_un.d_ptr)
 #define _DYN_TAKE_VAL(_dyn)       ((_dyn).d_un.d_val)
@@ -220,7 +220,7 @@ error:
 
     assert(hashtab_off);
 
-    tmixelf_internal_reloc eir = {
+    tmixelf_internal_symtab eist = {
         .strtab = strtab,
         .symtab_off = symtab_off,
         .hashtab_off = hashtab_off,
@@ -229,14 +229,21 @@ error:
         .rela = rela,
     };
 
-    if (_tmixelf_internal_parse_reloc(fd, &eir) < 0)
+    if (_tmixelf_internal_parse_symtab(fd, &eist) < 0)
         goto error;
 
-    if (eir.relocs.size) {
-        // at least one relocation entry is found
+    if (eist.syms.size) {
+        // at least one symbol is found
 
-        eid->relocs.data = eir.relocs.data;
-        eid->relocs.size = eir.relocs.size;
+        eid->syms.data = eist.syms.data;
+        eid->syms.size = eist.syms.size;
+
+        if (eist.relocs.size) {
+            // at least one relocation entry is found
+
+            eid->relocs.data = eist.relocs.data;
+            eid->relocs.size = eist.relocs.size;
+        }
     }
 
     // finally...

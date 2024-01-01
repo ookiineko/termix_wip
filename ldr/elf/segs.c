@@ -233,9 +233,14 @@ error:
                     eis->needs.size = eid.needs.size;
                 }
 
-                if (eid.relocs.size) {
-                    eis->relocs.data = eid.relocs.data;
-                    eis->relocs.size = eid.relocs.size;
+                if (eid.syms.size) {
+                    eis->syms.data = eid.syms.data;
+                    eis->syms.size = eid.syms.size;
+
+                    if (eid.relocs.size) {
+                        eis->relocs.data = eid.relocs.data;
+                        eis->relocs.size = eid.relocs.size;
+                    }
                 }
 
                 break;

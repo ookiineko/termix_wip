@@ -37,6 +37,7 @@ typedef struct {
     bool execstack;
     tmix_array needs;  // data is optional
     tmix_array relocs;  // data is optional
+    tmix_array syms;  // data is optional
 } tmixelf_internal_segs;
 
 /*

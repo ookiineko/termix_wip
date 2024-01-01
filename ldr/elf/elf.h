@@ -39,7 +39,7 @@ typedef struct {
     size_t off;  // offset relative to the first segment
     tmix_chunk file;  // file offset and size of reference data
     tmix_chunk pad;  /* size and offset relative to the start of this segment for zero paddings
-                        empty if no explicit zero padding required */
+                    　　 empty if no explicit zero padding required */
     tmixelf_seg_flag flags;  // protection flags for this segment
 } tmixelf_seg;
 
@@ -59,14 +59,16 @@ typedef enum {
 typedef struct {
     char *name;
     tmixelf_sym_type type;
+    bool imported;
+    size_t off;  // location of the symbol, ignored if the symbol is imported
 } tmixelf_sym;
 
 /*
- * ELF relocation info
+ * ELF relocation entry
  */
 typedef struct {
-    tmixelf_sym sym;  // information about the relocated symbol
-    size_t off;  // memory location storing the address of this symbol (relative to the first segment)
+    size_t symidx;  // index of the relocated symbol in symbol table
+    size_t off;  // location to the where the address to the symbol is stored
 } tmixelf_reloc;
 
 /*
@@ -78,11 +80,12 @@ typedef struct {
     size_t entry;  // entrypoint address (relative to the first segment)
     tmix_array segs;  // array of segment informations (i.e. tmixelf_seg)
     size_t mem_size;  // sum of sizes of all loadable semgents
-    tmix_array relocs;  // array of relocation informations (i.e. tmixelf_reloc)
+    tmix_array syms;  // array of symbols from the ELF symbol table (i.e. tmixelf_sym)
     bool execstack;  // whether if has an executable stack
     tmix_array relros;  /* array of segments that require changing memory protection to
                            read-only after dynamic linking, each element storing tmix_chunk */
     tmix_array needs;  // list of depended shared library names
+    tmix_array relocs;  // list of relocation entries (i.e. tmixelf_reloc)
 } tmixelf_info;
 
 /*

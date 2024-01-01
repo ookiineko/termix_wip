@@ -15,12 +15,12 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "_reloc.h"
+#include "_symtab.h"
 
-int _tmixelf_internal_parse_reloc(int fd, tmixelf_internal_reloc *eir) {
+int _tmixelf_internal_parse_symtab(int fd, tmixelf_internal_symtab *eist) {
     // TODO
     (void)fd;
-    (void)eir;
+    (void)eist;
 
     return 0;
 }

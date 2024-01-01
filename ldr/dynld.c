@@ -47,15 +47,21 @@ int tmixdynld_handle_elf(void *base, const tmixelf_info *ei) {
 
     if (ei->relocs.size) {
         tmixelf_reloc *relocs = ei->relocs.data;
+        tmixelf_sym *syms = ei->syms.data;
 
         assert(relocs);
+        assert(syms);
 
         for (i = 0; i < ei->relocs.size; i++) {
             // FIXME: support other shlibs
-            void *the_sym = dlsym(__libc, relocs[i].sym.name);
+            tmixelf_sym *sym = &syms[relocs[i].symidx];
+
+            assert(sym->imported);
+
+            void *the_sym = dlsym(__libc, sym->name);
 
             if (!the_sym) {
-                fprintf(stderr, "missing symbol to relocate: %s\n", relocs[i].sym.name);
+                fprintf(stderr, "missing symbol to relocate: %s\n", sym->name);
                 errno = EAGAIN;
                 return -1;
             }
