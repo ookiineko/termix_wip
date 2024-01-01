@@ -25,11 +25,12 @@
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
+#include <Windows.h>  // for GetModuleFileName
 #elif defined(__APPLE__)
+// for _NSGetExecutablePath
 #include <stdint.h>
-#include <mach-o/dyld.h>  // for _NSGetExecutablePath
-#else
+#include <mach-o/dyld.h>
+#elif defined(__linux__)
 #include <unistd.h>  // for readlink
 #endif
 
@@ -72,7 +73,7 @@ __attribute__((constructor)) static void __init_progdir(void) {
         fprintf(stderr, "unknown error getting self location\n");
         return;
     }
-#else
+#elif defined(__linux__)
     ssize_t len;
 
     len = readlink("/proc/self/exe", __progdir_buff, sizeof(__progdir_buff));
@@ -84,6 +85,8 @@ __attribute__((constructor)) static void __init_progdir(void) {
     }
 
     __progdir_buff[len] = '\0';
+#else
+#error Dont know how to get self location on this platform yet
 #endif
 
     ___tmix_progdir = dirname(__progdir_buff);
