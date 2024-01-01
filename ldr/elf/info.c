@@ -182,17 +182,6 @@ void tmixelf_print_info(const tmixelf_info *ei) {
     size_t i;
 
     if (ei->segs.size) {
-        if (ei->relros.size) {
-            tmix_chunk *relros = ei->relros.data;
-
-            assert(relros);
-
-            for (i = 0; i < ei->relros.size; i++) {
-                printf("relro segment #%ld:\n", i);
-                printf("  range: " _PTRFMT " to " _PTRFMT "\n", relros[i].off, relros[i].off + relros[i].size);
-            }
-        }
-
         tmixelf_seg *si = ei->segs.data;
 
         assert(si);
@@ -214,6 +203,18 @@ void tmixelf_print_info(const tmixelf_info *ei) {
                 if (si[i].flags & TMIXELF_SEG_EXEC)
                     printf("X ");
                 printf("\n");
+            }
+        }
+
+        if (ei->relros.size) {
+            tmix_chunk *relros = ei->relros.data;
+
+            assert(relros);
+
+            printf("relro segments:\n");
+
+            for (i = 0; i < ei->relros.size; i++) {
+                printf("  " _PTRFMT " to " _PTRFMT "\n", relros[i].off, relros[i].off + relros[i].size);
             }
         }
     }
