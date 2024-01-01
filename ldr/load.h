@@ -18,8 +18,6 @@
 #ifndef TERMIX_LOADER_LOAD_H
 #define TERMIX_LOADER_LOAD_H
 
-#include "../inc/macros.h"
-
 #include "elf/elf.h"
 
 /*
@@ -27,11 +25,10 @@
  *
  * initialize this struct with zero
  */
-_tmix_typedef(struct, ldr_elf) {
+typedef struct {
     void *base;  // the address of the first segment
     void (*entry)(void);  // ELF entrypoint function pointer
-};
-_tmix_typedef_end(struct, ldr_elf);
+} tmixldr_elf;
 
 /*
  * fd - read-only file descriptor referencing and opened ELF file

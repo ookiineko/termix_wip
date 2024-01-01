@@ -21,7 +21,6 @@
 #include <stdbool.h>
 #include <sys/types.h>
 
-#include "../../inc/macros.h"
 #include "../../inc/types.h"
 
 /*
@@ -29,7 +28,7 @@
  *
  * data stored in the relocs field should be moved to a tmixelf_info
  */
-_tmix_typedef(struct, elf_internal_reloc) {
+typedef struct {
     const char *strtab;
     size_t symtab_off;
     size_t hashtab_off;
@@ -37,8 +36,7 @@ _tmix_typedef(struct, elf_internal_reloc) {
     size_t rel_size;
     bool rela;
     tmix_array relocs;  // array, optional
-};
-_tmix_typedef_end(struct, elf_internal_reloc);
+} tmixelf_internal_reloc;
 
 /*
  * caller should fill the fields in eir as argument and set the relocs field to zero

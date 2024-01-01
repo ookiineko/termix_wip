@@ -21,7 +21,6 @@
 #include <stdbool.h>
 #include <sys/types.h>
 
-#include "../../inc/macros.h"
 #include "../../inc/types.h"
 
 #include "_arch.h"
@@ -31,15 +30,14 @@
  *
  * values stored in this struct should be moved to a tmixelf_info
  */
-_tmix_typedef(struct, elf_internal_segs) {
+typedef struct {
     tmix_array segs;  // data is optional
     tmix_array relros;  // data is optional
     size_t highest_addr;
     bool execstack;
     tmix_array needs;  // data is optional
     tmix_array relocs;  // data is optional
-};
-_tmix_typedef_end(struct, elf_internal_segs);
+} tmixelf_internal_segs;
 
 /*
  * returns 0 if success, otherwise -1 and sets errno

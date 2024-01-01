@@ -18,7 +18,6 @@
 #ifndef TERMIX_LOADER_ELF_INTERNAL_DYN_H
 #define TERMIX_LOADER_ELF_INTERNAL_DYN_H
 
-#include "../../inc/macros.h"
 #include "../../inc/types.h"
 
 #include "_arch.h"
@@ -28,11 +27,10 @@
  *
  * values stored in this struct should be moved to a tmixelf_info
  */
-_tmix_typedef(struct, elf_internal_dyn) {
+typedef struct {
     tmix_array relocs;  // array, optional
     tmix_array needs;  // array, optional
-};
-_tmix_typedef_end(struct, elf_internal_dyn);
+} tmixelf_internal_dyn;
 
 /*
  * returns 0 if success, otherwise -1 and sets errno
