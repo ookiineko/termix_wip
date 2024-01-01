@@ -270,7 +270,7 @@ void tmixelf_print_info(const tmixelf_info *ei) {
 
         for (i = 0; i < ei->needs.size; i++) {
             assert(needs[i]);
-            printf("  %ld: %s\n", i, needs[i]);
+            printf("  %s\n", needs[i]);
         }
     }
 }
