@@ -173,11 +173,11 @@ void tmixelf_print_info(const tmixelf_info *ei) {
 
     printf("loadable segment count: %ld\n", ei->segs.size);
 
+    printf("post-reloc RO segment count: %ld\n", ei->relros.size);
+
     printf("symbols count: %ld\n", ei->syms.size);
 
     printf("relocation count: %ld\n", ei->relocs.size);
-
-    printf("post-reloc RO segment count: %ld\n", ei->relros.size);
 
     size_t i;
 
