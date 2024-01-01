@@ -175,7 +175,7 @@ void tmixelf_print_info(const tmixelf_info *ei) {
 
     printf("post-reloc RO segment count: %ld\n", ei->relros.size);
 
-    printf("symbols count: %ld\n", ei->syms.size);
+    printf("symbol count: %ld\n", ei->syms.size);
 
     printf("relocation count: %ld\n", ei->relocs.size);
 
@@ -211,7 +211,7 @@ void tmixelf_print_info(const tmixelf_info *ei) {
 
             assert(relros);
 
-            printf("relro segments:\n");
+            printf("relro segment list:\n");
 
             for (i = 0; i < ei->relros.size; i++) {
                 printf("  " _PTRFMT " to " _PTRFMT "\n", relros[i].off, relros[i].off + relros[i].size);
@@ -223,7 +223,7 @@ void tmixelf_print_info(const tmixelf_info *ei) {
         tmixelf_sym *syms = ei->syms.data;
         assert(syms);
 
-        printf("symbols:\n");
+        printf("symbol table:\n");
 
         for (i = 0; i < ei->syms.size; i++) {
             printf("  " _PTRFMT " %s (", syms[i].off, syms[i].name);
@@ -252,7 +252,7 @@ void tmixelf_print_info(const tmixelf_info *ei) {
             tmixelf_reloc *relocs = ei->relocs.data;
             assert(relocs);
 
-            printf("relocations:\n");
+            printf("relocation table:\n");
 
             for (i = 0; i < ei->relocs.size; i++) {
                 tmixelf_sym *sym = &syms[relocs[i].symidx];
@@ -263,7 +263,7 @@ void tmixelf_print_info(const tmixelf_info *ei) {
     }
 
     if (ei->needs.size) {
-        printf("required libraries:\n");
+        printf("required library list:\n");
 
         char **needs = ei->needs.data;
 
