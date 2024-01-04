@@ -31,7 +31,7 @@
 #elif defined(__x86_64__) || defined(__aarch64__)
 #  define TMIX64
 #else
-#  warning Dont know word side on this platform yet
+#  warning Dont know word size on this platform yet
 #endif
 
 #endif /* TERMIX_COMMON_INCLUDE_ARCH_H */
