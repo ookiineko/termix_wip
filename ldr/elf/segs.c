@@ -23,10 +23,10 @@
 #include <unistd.h>
 
 #ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
+#  define WIN32_LEAN_AND_MEAN
+#  include <Windows.h>
 #else
-#include <unistd.h>  // for sysconf
+#  include <unistd.h>  // for sysconf
 #endif
 
 #include "../../inc/logging.h"

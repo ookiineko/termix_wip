@@ -19,19 +19,19 @@
 #define TERMIX_COMMON_INCLUDE_ARCH_H
 
 #if defined(__BIG_ENDIAN__)|| (defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__))
-#define TMIX_BIG_ENDIAN
+#  define TMIX_BIG_ENDIAN
 #elif defined(__LITTLE_ENDIAN__)|| (defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__))
-#define TMIX_LITTLE_ENDIAN
+#  define TMIX_LITTLE_ENDIAN
 #else
-#warning Dont know endian-ness on this platform yet
+#  warning Dont know endian-ness on this platform yet
 #endif
 
 #if defined(__i386__) || defined(__arm__)
-#define TMIX32
+#  define TMIX32
 #elif defined(__x86_64__) || defined(__aarch64__)
-#define TMIX64
+#  define TMIX64
 #else
-#warning Dont know word side on this platform yet
+#  warning Dont know word side on this platform yet
 #endif
 
 #endif /* TERMIX_COMMON_INCLUDE_ARCH_H */

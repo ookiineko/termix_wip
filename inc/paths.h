@@ -22,9 +22,27 @@
  * directory storing the runtime libraries (relative to the bindir)
  */
 #if defined(_WIN32) || defined(__CYGWIN__)
-#define _TMIX_LIBPATH                "."
+#  define _TMIX_LIBPATH                 "."
+#  ifdef __CYGWIN__
+#    ifdef __MSYS__
+#      define _TMIX_SHLIB_PREFIX        "msys-"
+#    else
+#      define _TMIX_SHLIB_PREFIX        "cyg"
+#    endif
+#  elif defined(__MINGW32__)
+#    define _TMIX_SHLIB_PREFIX          "lib"
+#  else
+#    define _TMIX_SHLIB_PREFIX          ""
+#  endif
+#  define _TMIX_SHLIB_SUFFIX            ".dll"
 #else
-#define _TMIX_LIBPATH                "../lib"
+#  define _TMIX_LIBPATH                 "../lib"
+#  define _TMIX_SHLIB_PREFIX            "lib"
+#  ifdef __APPLE__
+#    define _TMIX_SHLIB_SUFFIX          ".dylib"
+#  else
+#    define _TMIX_SHLIB_SUFFIX          ".so"
+#  endif
 #endif
 
 extern char *___tmix_progdir;  // dont use directly

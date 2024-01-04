@@ -34,39 +34,39 @@
 #include "_segs.h"
 
 #ifdef TMIX32
-#define _EXPECTED_EICLASS      (ELFCLASS32)
+#  define _EXPECTED_EICLASS      (ELFCLASS32)
 #elif defined(TMIX64)
-#define _EXPECTED_EICLASS      (ELFCLASS64)
+#  define _EXPECTED_EICLASS      (ELFCLASS64)
 #else
-#error Dont know ELF class on this platform yet
+#  error Dont know ELF class on this platform yet
 #endif
 
 #ifdef TMIX32
-#define _PTRFMT                "%#08lx"
+#  define _PTRFMT                "%#08lx"
 #elif defined(TMIX64)
-#define _PTRFMT                "%#016lx"
+#  define _PTRFMT                "%#016lx"
 #else
-#error Dont know word size on this platform yet
+#  error Dont know word size on this platform yet
 #endif
 
 #ifdef __i386__
-#define _EXPECTED_EMACH        (EM_386)
+#  define _EXPECTED_EMACH        (EM_386)
 #elif defined(__arm__)
-#define _EXPECTED_EMACH        (EM_ARM)
+#  define _EXPECTED_EMACH        (EM_ARM)
 #elif defined(__x86_64__)
-#define _EXPECTED_EMACH        (EM_X86_64)
+#  define _EXPECTED_EMACH        (EM_X86_64)
 #elif defined(__aarch64__)
-#define _EXPECTED_EMACH        (EM_AARCH64)
+#  define _EXPECTED_EMACH        (EM_AARCH64)
 #else
-#error Dont know ELF machine value on this architecture yet
+#  error Dont know ELF machine value on this architecture yet
 #endif
 
 #ifdef TMIX_BIG_ENDIAN
-#define _EXPECTED_EIDATA       (ELFDATA2MSB)
+#  define _EXPECTED_EIDATA       (ELFDATA2MSB)
 #elif defined(TMIX_LITTLE_ENDIAN)
-#define _EXPECTED_EIDATA       (ELFDATA2LSB)
+#  define _EXPECTED_EIDATA       (ELFDATA2LSB)
 #else
-#error Dont know endian-ness on this platform yet
+#  error Dont know endian-ness on this platform yet
 #endif
 
 int tmixelf_parse_info(int fd, tmixelf_info *ei) {

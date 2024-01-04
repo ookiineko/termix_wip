@@ -32,7 +32,7 @@
 
 #include "dynld.h"
 
-#define _LIBC_PATH               "../share/termix/tests/tmixfakelibc.dll"
+#define _LIBC_PATH               "../share/termix/tests/" _TMIX_SHLIB_PREFIX "tmixfakelibc" _TMIX_SHLIB_SUFFIX
 
 static void *__libc = NULL;
 

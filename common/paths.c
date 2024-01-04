@@ -24,14 +24,14 @@
 #include <sys/types.h>
 
 #ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>  // for GetModuleFileName
+#  define WIN32_LEAN_AND_MEAN
+#  include <Windows.h>  // for GetModuleFileName
 #elif defined(__APPLE__)
 // for _NSGetExecutablePath
-#include <stdint.h>
-#include <mach-o/dyld.h>
+#  include <stdint.h>
+#  include <mach-o/dyld.h>
 #elif defined(__linux__)
-#include <unistd.h>  // for readlink
+#  include <unistd.h>  // for readlink
 #endif
 
 #include "../inc/paths.h"
