@@ -13,9 +13,9 @@ Similar to WINE 🍷, Termix does not try to emulate or rely on virtualization t
 
 Another highlight is support for using native Windows APIs alongside with the Linux ones in Termix is also planned to be added in the future 😈 (the idea is inspired by Cygwin), hence the "mix" in the name.
 
-## Why not just use WSL?
+## Isn't this just WSL1?
 
-This project can be considered as a WSL alternative. However, it doesn't support running unmodified Linux binaries, programs and libraries in the Termix distribution are recompiled specifically to work under it.
+This project can be considered as a WSL1 alternative. However, it doesn't support running unmodified Linux binaries, programs and libraries in the Termix distribution are recompiled specifically to work under it.
 
 ## Project status
 
@@ -41,6 +41,7 @@ This project can be considered as a WSL alternative. However, it doesn't support
 #### Optional
 
 * support for 32-bit x86 machines
+- [x] support macOS
 
 #### Need help
 
