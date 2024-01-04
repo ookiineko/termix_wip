@@ -93,6 +93,21 @@ error:
             eis->relros.data = NULL;
         }
 
+        if (eis->needs.data) {
+            free(eis->needs.data);
+            eis->needs.data = NULL;
+        }
+
+        if (eis->relocs.data) {
+            free(eis->relocs.data);
+            eis->relocs.data = NULL;
+        }
+
+        if (eis->syms.data) {
+            free(eis->syms.data);
+            eis->syms.data = NULL;
+        }
+
         return -1;
     }
 
