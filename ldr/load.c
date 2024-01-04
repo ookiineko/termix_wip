@@ -84,7 +84,7 @@ quit:
         }
 
         if (si[i].pad.size &&
-            mmap(base+ si[i].off + si[i].pad.off, si[i].pad.size, prot,
+            mmap(base + si[i].off + si[i].pad.off, si[i].pad.size, prot,
                  MAP_FIXED | MAP_PRIVATE | MAP_ANON, -1, 0) == MAP_FAILED)
             goto quit;
     }

@@ -5,7 +5,7 @@
 
 #include "syscalls.h"
 
-#include "hello_bare.h"
+#include "../hello.h"
 
 void _foo() {
     const char hello[] = "Hello, world!\n";

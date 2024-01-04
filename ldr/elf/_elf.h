@@ -68,7 +68,7 @@
 // dynamic linking information
 #define PT_DYNAMIC          (2)
 // path to dynmaic linker, unused by us
-#define PT_INTERP	        (3)
+#define PT_INTERP	    (3)
 // extra inforamtion, ignored by us
 #define PT_NOTE             (4)
 // entry used for storing segment header table itself, unused by us
@@ -123,7 +123,7 @@
 /*
  * dynamic flags
  */
-#define DF_1_PIE           (0x8000000)
+#define DF_1_PIE            (0x8000000)
 
 /*
  * relocation types
