@@ -18,6 +18,8 @@
 #ifndef TERMIX_LOADER_LOAD_H
 #define TERMIX_LOADER_LOAD_H
 
+#include "../inc/abi.h"
+
 #include "elf/elf.h"
 
 /*
@@ -27,7 +29,7 @@
  */
 typedef struct {
     void *base;  // the address of the first segment
-    void (*entry)(void);  // ELF entrypoint function pointer
+    __tmixabi void (*entry)(void);  // ELF entrypoint function pointer
 } tmixldr_elf;
 
 /*
