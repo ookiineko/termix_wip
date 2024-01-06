@@ -69,7 +69,7 @@ __attribute__((constructor)) static void __init_progdir(void) {
 #elif defined(__APPLE__)
     uint32_t buff_size = sizeof(__progdir_buff);
 
-    if (!_NSGetExecutablePath(__progdir_buff, &buff_size)) {
+    if (_NSGetExecutablePath(__progdir_buff, &buff_size)) {
         fprintf(stderr, "unknown error getting self location\n");
         return;
     }
