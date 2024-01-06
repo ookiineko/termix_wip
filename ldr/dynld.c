@@ -16,14 +16,20 @@
  */
 
 #include <assert.h>
-#include <dlfcn.h>
 #include <errno.h>
 #include <inttypes.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/mman.h>
 #include <sys/types.h>
+
+#ifdef _WIN32
+#  define WIN32_LEAN_AND_MEAN
+#  include <Windows.h>
+#else
+#  include <dlfcn.h>
+#  include <sys/mman.h>
+#endif
 
 #include "../inc/paths.h"
 #include "../inc/types.h"
@@ -58,10 +64,25 @@ int tmixdynld_handle_elf(void *base, const tmixelf_info *ei) {
 
             assert(sym->imported);
 
+#ifdef _WIN32
+            void *the_sym = GetProcAddress(__libc, sym->name);
+#else
             void *the_sym = dlsym(__libc, sym->name);
+#endif
 
             if (!the_sym) {
-                fprintf(stderr, "missing symbol to relocate: %s\n", sym->name);
+#ifdef _WIN32
+                // TODO: use FormatMessage to print human readable error message
+                fprintf(stderr, "error while relocating symbol %s: WinError %ld\n", sym->name, GetLastError());
+#else
+                const char *err = dlerror();
+
+                if (err)
+                    fprintf(stderr, "error while relocating symbol %s: %s\n", sym->name, err);
+                else
+                    fprintf(stderr, "unknown error while relocating symbol %s\n", sym->name);  // how
+#endif
+
                 errno = EAGAIN;
                 return -1;
             }
@@ -78,7 +99,13 @@ int tmixdynld_handle_elf(void *base, const tmixelf_info *ei) {
         assert(relros);
 
         for (i = 0; i < ei->relros.size; i++) {
+#ifdef _WIN32
+            DWORD old_prot = 0;  // unused
+
+            if (!VirtualProtect(base + relros[i].off, relros[i].size, PAGE_READONLY, &old_prot))
+#else
             if (mprotect(base + relros[i].off, relros[i].size, PROT_READ) < 0)
+#endif
                 return -1;
         }
     }
@@ -99,15 +126,24 @@ __attribute__((constructor)) static void __init_libc(void) {
         return;
     }
 
+#ifdef _WIN32
+    __libc = LoadLibrary(libc_path);
+#else
     __libc = dlopen(libc_path, RTLD_LAZY);
+#endif
 
     if (!__libc) {
+#ifdef _WIN32
+        // TODO: use FormatMessage to print human readable error message
+        fprintf(stderr, "error while opening DLL: WinError %ld\n", GetLastError());
+#else
         const char *err = dlerror();
 
         if (err)
             fprintf(stderr, "error while opening shared library: %s\n", err);
         else
             fprintf(stderr, "unknown error while opening shared library %s\n", libc_path);  // how
+#endif
     }
 
     free(libc_path);
@@ -115,7 +151,11 @@ __attribute__((constructor)) static void __init_libc(void) {
 
 __attribute__((destructor)) static void __destroy_libc(void) {
     if (__libc) {
+#ifdef _WIN32
+        FreeLibrary(__libc);
+#else
         dlclose(__libc);
+#endif
         __libc = NULL;
     }
 }

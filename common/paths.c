@@ -64,6 +64,9 @@ __attribute__((constructor)) static void __init_progdir(void) {
         // TODO: use FormatMessage to print human readable error message
         fprintf(stderr, "error getting self location: WinError %ld\n", GetLastError());
 
+        // FIXME: set errno according to win32 error
+        errno = -1;
+
         return;
     }
 #elif defined(__APPLE__)

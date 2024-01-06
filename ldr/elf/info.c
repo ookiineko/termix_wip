@@ -17,6 +17,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <inttypes.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,9 +43,9 @@
 #endif
 
 #ifdef TMIX32
-#  define _PTRFMT                "%#08lx"
+#  define _PTRFMT                "%#08" PRIxPTR
 #elif defined(TMIX64)
-#  define _PTRFMT                "%#016lx"
+#  define _PTRFMT                "%#016" PRIxPTR
 #else
 #  error Dont know word size on this platform yet
 #endif
@@ -165,19 +166,19 @@ void tmixelf_print_info(const tmixelf_info *ei) {
         return;
 
     if (ei->entry)
-        printf("entrypoint offset (relative): %#lx\n", ei->entry);
+        printf("entrypoint offset (relative): %#" PRIxPTR "\n", ei->entry);
 
-    printf("total size in memory when loaded: %#lx\n", ei->mem_size);
+    printf("total size in memory when loaded: %#" PRIxPTR "\n", ei->mem_size);
 
     printf("stack executable: %s\n", ei->execstack ? "yes" : "no");
 
-    printf("loadable segment count: %ld\n", ei->segs.size);
+    printf("loadable segment count: %" PRIuPTR "\n", ei->segs.size);
 
-    printf("post-reloc RO segment count: %ld\n", ei->relros.size);
+    printf("post-reloc RO segment count: %" PRIuPTR "\n", ei->relros.size);
 
-    printf("symbol count: %ld\n", ei->syms.size);
+    printf("symbol count: %" PRIuPTR "\n", ei->syms.size);
 
-    printf("relocation count: %ld\n", ei->relocs.size);
+    printf("relocation count: %" PRIuPTR "\n", ei->relocs.size);
 
     size_t i;
 
@@ -187,12 +188,12 @@ void tmixelf_print_info(const tmixelf_info *ei) {
         assert(si);
 
         for (i = 0; i < ei->segs.size; i++) {
-            printf("loadable segment #%ld:\n", i);
+            printf("loadable segment #%" PRIuPTR ":\n", i);
             printf("  relative offset: " _PTRFMT "\n", si[i].off);
             if (si[i].file.size)
-                printf("  file data size: %#lx (at file offset " _PTRFMT ")\n", si[i].file.size, si[i].file.off);
+                printf("  file data size: %#" PRIxPTR " (at file offset " _PTRFMT ")\n", si[i].file.size, si[i].file.off);
             if (si[i].pad.size)
-                printf("  zero padding size: %#lx (relative offset " _PTRFMT ")\n", si[i].pad.size, si[i].pad.off);
+                printf("  zero padding size: %#" PRIxPTR " (relative offset " _PTRFMT ")\n", si[i].pad.size, si[i].pad.off);
 
             if (si[i].flags) {
                 printf("  flags: ");

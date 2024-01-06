@@ -302,7 +302,7 @@ error:
 __attribute__((constructor)) static void __init_pagesize(void) {
 #ifdef _WIN32
     SYSTEM_INFO si = {};
-    GetSystemInfo(&si);
+    GetSystemInfo(&si);  // wont fail
     __pagesize = si.dwAllocationGranularity;
 #else
     __pagesize = sysconf(_SC_PAGESIZE);
