@@ -30,7 +30,7 @@
 // for _NSGetExecutablePath
 #  include <stdint.h>
 #  include <mach-o/dyld.h>
-#elif defined(__linux__)
+#elif defined(__linux__) || defined(__CYGWIN__)
 #  include <unistd.h>  // for readlink
 #endif
 
@@ -73,7 +73,7 @@ __attribute__((constructor)) static void __init_progdir(void) {
         fprintf(stderr, "unknown error getting self location\n");
         return;
     }
-#elif defined(__linux__)
+#elif defined(__linux__) || defined(__CYGWIN__)
     ssize_t len;
 
     len = readlink("/proc/self/exe", __progdir_buff, sizeof(__progdir_buff));
