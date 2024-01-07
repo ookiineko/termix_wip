@@ -26,13 +26,19 @@ endif()
 #
 # prefer lld if available
 #
-find_program(LLD_EXECUTABLE lld)
-if (LLD_EXECUTABLE)
-  message(STATUS "Found lld: ${LLD_EXECUTABLE}")
-  set(CMAKE_REQUIRED_LINK_OPTIONS -fuse-ld=lld)
-  add_link_options(${CMAKE_REQUIRED_LINK_OPTIONS})
+if (CLANG_EXECUTABLE)
+  find_program(LLD_EXECUTABLE lld)
+  if (LLD_EXECUTABLE)
+    message(STATUS "Found lld: ${LLD_EXECUTABLE}")
+    set(CMAKE_REQUIRED_LINK_OPTIONS -fuse-ld=lld)
+    add_link_options(${CMAKE_REQUIRED_LINK_OPTIONS})
+  else()
+    message(STATUS "CANNOT find lld")
+  endif()
 else()
-  message(STATUS "CANNOT find lld")
+  # only try to use lld with clang
+  # other compilers may not support it correctly
+  message(STATUS "lld is DISABLED")
 endif()
 
 #
