@@ -42,6 +42,7 @@ This project can be considered as a WSL1 alternative. However, it doesn't suppor
 
 - [x] support for 32-bit x86 machines
 - [x] support macOS
+- [ ] support Android (Termux)
 
 #### Need help
 
