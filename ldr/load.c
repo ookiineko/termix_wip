@@ -183,8 +183,10 @@ int tmixldr_load_elf(int fd, const tmixelf_info *ei, tmixldr_elf *e) {
 #endif
 
     if (base == MAP_FAILED) {
+#ifdef _WIN32
         // FIXME: set errno according to win32 error
         errno = -1;
+#endif
 quit:
 #ifdef _WIN32
         CloseHandle(hFile);
