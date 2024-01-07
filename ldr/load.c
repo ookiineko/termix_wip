@@ -83,6 +83,8 @@ static inline tmixldr_internal_prot_t __conv_prot(tmixelf_seg_flag flags, bool p
     if (exec)
         res.access |= FILE_MAP_EXECUTE;
 #else
+    (void) pad;
+
     if (flags & TMIXELF_SEG_READ)
         res |= PROT_READ;
     if (flags & TMIXELF_SEG_WRITE)
@@ -184,7 +186,9 @@ int tmixldr_load_elf(int fd, const tmixelf_info *ei, tmixldr_elf *e) {
         // FIXME: set errno according to win32 error
         errno = -1;
 quit:
+#ifdef _WIN32
         CloseHandle(hFile);
+#endif
         return -1;
     }
 

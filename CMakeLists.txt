@@ -3,15 +3,25 @@ cmake_minimum_required(VERSION 3.20)
 #
 # prefer clang if available
 #
-find_program(CLANG_EXECUTABLE clang)
-if (CLANG_EXECUTABLE)
-  message(STATUS "Found clang: ${CLANG_EXECUTABLE}")
-  set(CMAKE_C_COMPILER "clang")
-else()
-  message(STATUS "CANNOT find clang")
+option(WITHOUT_CLANG "Do not try to use clang even if it's present" OFF)
+
+if (NOT WITHOUT_CLANG)
+  find_program(CLANG_EXECUTABLE clang)
+  if (CLANG_EXECUTABLE)
+    message(STATUS "Found clang: ${CLANG_EXECUTABLE}")
+    set(CMAKE_C_COMPILER "clang")
+  else()
+    message(STATUS "CANNOT find clang")
+  endif()
 endif()
 
 project(termix LANGUAGES C)
+
+if (CYGWIN AND CLANG_EXECUTABLE)
+  message(FATAL_ERROR "\
+    Using clang on Cygwin is NOT supported and NOT recommended,
+    please pass -DWITHOUT_CLANG=ON to CMake and reconfigure.")
+endif()
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_EXTENSIONS ON)
