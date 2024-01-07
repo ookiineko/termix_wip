@@ -1,31 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-
-#
-# prefer Clang if available
-#
-option(WITHOUT_CLANG "Do not try to use Clang even if it's present" OFF)
-if (WITHOUT_CLANG)
-  message(STATUS "Clang is DISABLED")
-else()
-  find_program(CLANG_EXECUTABLE clang)
-  if (CLANG_EXECUTABLE)
-    message(STATUS "Found Clang: ${CLANG_EXECUTABLE}")
-    set(CMAKE_C_COMPILER "clang")
-  else()
-    message(STATUS "CANNOT find Clang")
-  endif()
-endif()
-
 project(termix LANGUAGES C)
-
-#
-# detect Clang on Cygwin
-#
-if (CYGWIN AND CLANG_EXECUTABLE)
-  message(FATAL_ERROR "\
-    Using Clang on Cygwin is NOT supported and NOT recommended,
-    please pass -DWITHOUT_CLANG=ON to CMake and reconfigure.")
-endif()
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_EXTENSIONS ON)
@@ -41,31 +15,26 @@ if (C_VISIBILITY_EQ_HIDDEN_WORKS)
 endif()
 
 #
-# prefer LLD if available
+# use LLD if available
 #
-option(WITHOUT_LLD "Do not try to use LLD even if available" OFF)
-if (CLANG_EXECUTABLE AND NOT WITHOUT_LLD)
+option(TERMIX_PREFER_LLD_AS_LINKER "try to use LLVM LLD for linking" ON)
+if (TERMIX_PREFER_LLD_AS_LINKER AND CMAKE_C_COMPILER_ID MATCHES "Clang")
+  # only try to use LLD with Clang
+  # other compilers may not support it correctly
+
   find_program(LLD_EXECUTABLE lld)
   if (LLD_EXECUTABLE)
     message(STATUS "Found LLD: ${LLD_EXECUTABLE}")
     set(CMAKE_REQUIRED_LINK_OPTIONS -fuse-ld=lld)
     add_link_options(${CMAKE_REQUIRED_LINK_OPTIONS})
-  else()
-    message(STATUS "CANNOT find LLD")
   endif()
-else()
-  # only try to use LLD with Clang
-  # other compilers may not support it correctly
-  message(STATUS "LLD is DISABLED")
 endif()
 
 #
-# prefer lto is available
+# LTO
 #
-option(WITHOUT_LTO "Do not try to use LTO even if available" OFF)
-if (WITHOUT_LTO)
-  message(STATUS "LTO is DISABLED")
-else()
+option(TERMIX_USE_LTO "enable link time optimization" ON)
+if (TERMIX_USE_LTO)
   CHECK_C_COMPILER_FLAG("-flto" C_LTO_WORKS)
   if (C_LTO_WORKS)
     message(STATUS "LTO is available")
@@ -73,6 +42,8 @@ else()
   else()
     message(STATUS "LTO is NOT available")
   endif()
+else()
+  message(STATUS "LTO is DISABLED")
 endif()
 
 add_compile_options(-Wall -Wextra -Werror)
