@@ -32,7 +32,7 @@ This project can be considered as a WSL1 alternative. However, it doesn't suppor
 
 #### Short-term
 
-* port to MinGW (WIP)
+- [x] port to MinGW (WIP)
 
 #### Long-term
 
