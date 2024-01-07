@@ -43,11 +43,11 @@
 #endif
 
 #ifdef TMIX32
-#  define _PTRFMT                "%#08" PRIxPTR
+#  define _PTRFMT                "0x%08" PRIxPTR
 #elif defined(TMIX64)
-#  define _PTRFMT                "%#016" PRIxPTR
+#  define _PTRFMT                "0x%016" PRIxPTR
 #else
-#  error Dont know word size on this platform yet
+#  error Dont know format for printing pointer on this platform yet
 #endif
 
 #ifdef __i386__
