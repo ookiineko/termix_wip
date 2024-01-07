@@ -18,7 +18,8 @@
 #ifndef TERMIX_COMMON_INCLUDE_ABI_H
 #define TERMIX_COMMON_INCLUDE_ABI_H
 
-#if defined(_WIN32) || defined(__CYGWIN__)
+// use System V calling convertion on x86_64 Windows
+#if defined(__x86_64__) && (defined(_WIN32) || defined(__CYGWIN__))
 #  define __tmixabi     __attribute__((sysv_abi))
 #else
 #  define __tmixabi
