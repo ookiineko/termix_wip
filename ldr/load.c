@@ -220,7 +220,7 @@ error:
             // dummy statement after jump label to make compiler happy
             ;
 
-            // unlike Cygwin, Windows remembers memory mapping by its start,
+            // unlike Cygwin, win32 mmap remembers memory mapping by its start,
             // so we have to free each of them separately
             size_t j;
 
