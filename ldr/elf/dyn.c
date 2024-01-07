@@ -104,7 +104,7 @@ int _tmixelf_internal_parse_dyn(int fd, const _ElfXX_Phdr *phdr, tmixelf_interna
                         // already assumed, ignore
                         break;
                     default:
-                        tmix_fixme("unhandled state flag %#" PRIx64, _DYN_TAKE_VAL(dyn));
+                        tmix_fixme("unhandled state flag %#" PRIxPTR, _DYN_TAKE_VAL(dyn));
                         break;
                 }
                 break;
@@ -112,7 +112,7 @@ int _tmixelf_internal_parse_dyn(int fd, const _ElfXX_Phdr *phdr, tmixelf_interna
                 // placeholder for runtime debug info, ignored
                 break;
             default:
-                tmix_fixme("unhandled dynamic tag %#" PRIx64, dyn.d_tag);
+                tmix_fixme("unhandled dynamic tag %#" PRIxPTR, dyn.d_tag);
                 break;
         } /* switch (dyn.d_tag) */
 

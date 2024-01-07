@@ -40,7 +40,7 @@ This project can be considered as a WSL1 alternative. However, it doesn't suppor
 
 #### Optional
 
-* support for 32-bit x86 machines
+- [x] support for 32-bit x86 machines
 - [x] support macOS
 
 #### Need help

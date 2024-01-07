@@ -108,8 +108,8 @@ static inline void *__win32_mmap_file(void *addr, size_t len,
     DWORD dwSizeLow = len + ((size_t) off);  // max size
     DWORD dwSizeHigh = 0;
 
-    DWORD dwOffetLow = (size_t) off;
-    DWORD dwOffetHigh = 0;
+    DWORD dwOffsetLow = (size_t) off;
+    DWORD dwOffsetHigh = 0;
 #   elif __SIZEOF_SIZE_T__ == (__SIZEOF_LONG__ * 2)
     // on 64-bit Windows, size_t can fit two DWORDs
 
