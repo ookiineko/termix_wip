@@ -6,6 +6,8 @@ add_library(tmixloader SHARED
 target_link_libraries(tmixloader
     tmixcommon
     tmixelf)
+target_compile_definitions(tmixloader PRIVATE
+    TMIX_BUILDING_LOADER_SHLIB)
 
 add_executable(tmixldr
     main.c)

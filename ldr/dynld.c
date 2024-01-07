@@ -17,9 +17,9 @@
 
 #include <assert.h>
 #include <errno.h>
-#include <inttypes.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <sys/types.h>
 

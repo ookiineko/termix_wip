@@ -18,6 +18,19 @@
 #ifndef TERMIX_COMMON_INCLUDE_PATHS_H
 #define TERMIX_COMMON_INCLUDE_PATHS_H
 
+#include "../inc/abi.h"
+
+#ifdef __clangd__
+   // for making IDE happy
+#  define _tmixlibcommon_api
+#else
+#  ifdef TMIX_BUILDING_LIBCOMMON_SHLIB
+#    define _tmixlibcommon_api      __tmixapi_export
+#  else
+#    define _tmixlibcommon_api      __tmixapi_import
+#  endif
+#endif
+
 /*
  * directory storing the runtime libraries (relative to the bindir)
  */
@@ -45,7 +58,7 @@
 #  endif
 #endif
 
-extern char *___tmix_progdir;  // dont use directly
+extern _tmixlibcommon_api char *___tmix_progdir;  // dont use directly
 
 /*
  * absolute path of program directory (bindir)
@@ -58,6 +71,6 @@ extern char *___tmix_progdir;  // dont use directly
  *
  * returns NULL if failed
  */
-char *_tmix_join_path(const char *a, const char *b);
+_tmixlibcommon_api char *_tmix_join_path(const char *a, const char *b);
 
 #endif /* TERMIX_COMMON_INCLUDE_PATHS_H */

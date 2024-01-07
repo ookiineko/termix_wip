@@ -1,5 +1,5 @@
 /*
-  elf.h - ELF library
+  elf.h - ELF parsing library
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,7 +21,19 @@
 #include <stdbool.h>
 #include <sys/types.h>
 
+#include "../../inc/abi.h"
 #include "../../inc/types.h"
+
+#ifdef __clangd__
+   // for making IDE happy
+#  define _tmixlibelf_api
+#else
+#  ifdef TMIX_BUILDING_LIBELF_SHLIB
+#    define _tmixlibelf_api      __tmixapi_export
+#  else
+#    define _tmixlibelf_api      __tmixapi_import
+#  endif
+#endif
 
 /*
  * ELF segment protection flags
@@ -99,20 +111,20 @@ typedef struct {
  *
  * caller should call free_elfinfo once the returned information is no longer used
  */
-int tmixelf_parse_info(int fd, tmixelf_info *ei);
+_tmixlibelf_api int tmixelf_parse_info(int fd, tmixelf_info *ei);
 
 /*
  * to print out the information in an elfinfo buffer
  *
  * for debugging purposes only
  */
-void tmixelf_print_info(const tmixelf_info *ei);
+_tmixlibelf_api void tmixelf_print_info(const tmixelf_info *ei);
 
 /*
  * ei - buffer to free
  *
  * returns 0 if succeed, otherwise -1 and sets errno
  */
-void tmixelf_free_info(tmixelf_info *ei);
+_tmixlibelf_api void tmixelf_free_info(tmixelf_info *ei);
 
 #endif /* TERMIX_LOADER_ELF_H */

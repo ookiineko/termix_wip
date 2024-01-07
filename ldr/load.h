@@ -22,6 +22,17 @@
 
 #include "elf/elf.h"
 
+#ifdef __clangd__
+   // for making IDE happy
+#  define _tmixldr_api
+#else
+#  ifdef TMIX_BUILDING_LOADER_SHLIB
+#    define _tmixldr_api      __tmixapi_export
+#  else
+#    define _tmixldr_api      __tmixapi_import
+#  endif
+#endif
+
 /*
  * information about a loaded ELF in memory
  *
@@ -41,7 +52,7 @@ typedef struct {
  *
  * NOTE: if the function failed, no ELF data is mapped to memory
  */
-int tmixldr_load_elf(int fd, const tmixelf_info *ei, tmixldr_elf *e);
+_tmixldr_api int tmixldr_load_elf(int fd, const tmixelf_info *ei, tmixldr_elf *e);
 
 /*
  * e - information about the loaded ELF
@@ -49,6 +60,6 @@ int tmixldr_load_elf(int fd, const tmixelf_info *ei, tmixldr_elf *e);
  *
  * returns 0 if succeed, otherwise -1 and sets errno
  */
-void tmixldr_unload_elf(tmixldr_elf *e, const tmixelf_info *ei);
+_tmixldr_api void tmixldr_unload_elf(tmixldr_elf *e, const tmixelf_info *ei);
 
 #endif /* TERMIX_LOADER_LOAD_H */

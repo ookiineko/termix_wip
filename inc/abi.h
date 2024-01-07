@@ -24,4 +24,12 @@
 #  define __tmixabi
 #endif
 
+#if defined(_WIN32) || defined(__CYGWIN__)
+#  define __tmixapi_import    __attribute__((dllimport))
+#  define __tmixapi_export    __attribute__((dllexport))
+#else
+#  define __tmixapi_import
+#  define __tmixapi_export    __attribute__((visibility ("default")))
+#endif
+
 #endif /* TERMIX_COMMON_INCLUDE_ABI_H */

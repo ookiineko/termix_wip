@@ -2,6 +2,8 @@ set(TMIXTEST_INSTALL_DATADIR "${TERMIX_INSTALL_DATADIR}/tests")
 
 add_library(tmixfakelibc SHARED
     lib/hello.c)
+target_compile_definitions(tmixfakelibc PRIVATE
+    TMIX_BUILDING_LIBC_SHLIB)
 
 install(TARGETS tmixfakelibc
         RUNTIME DESTINATION ${TMIXTEST_INSTALL_DATADIR}
