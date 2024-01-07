@@ -26,7 +26,7 @@
 #  include <limits.h>
 
 #  define WIN32_LEAN_AND_MEAN
-#  include <Windows.h>
+#  include <windows.h>
 
 #  define MAP_FAILED        NULL
 #else
