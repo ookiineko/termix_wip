@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 
 #ifdef _WIN32
@@ -114,18 +115,32 @@ int tmixdynld_handle_elf(void *base, const tmixelf_info *ei) {
 }
 
 __attribute__((constructor)) static void __init_libc(void) {
-    if (!_tmix_progdir)
-        return;  // sth went wrong at startup
+    char *libc_path = getenv("TMIXDYNLD_LIBC_PATH");
 
-    char *libc_path = _tmix_join_path(_tmix_progdir, _LIBC_PATH);
+    if (libc_path) {
+        libc_path = strdup(libc_path);
+
+        if (!libc_path) {
+            perror("error duplicating libc path");
+
+            return;
+        }
+
+        goto try_open;
+    }
+
+    if (!_tmix_progdir)
+        return;  // sth went wrong during startup
+
+    libc_path = _tmix_join_path(_tmix_progdir, _LIBC_PATH);
 
     if (!libc_path) {
-        // maybe memory error
         perror("error concatenating path for libc");
 
         return;
     }
 
+try_open:
 #ifdef _WIN32
     __libc = LoadLibrary(libc_path);
 #else
@@ -135,14 +150,14 @@ __attribute__((constructor)) static void __init_libc(void) {
     if (!__libc) {
 #ifdef _WIN32
         // TODO: use FormatMessage to print human readable error message
-        fprintf(stderr, "error while opening DLL: WinError %ld\n", GetLastError());
+        fprintf(stderr, "error while opening libc: WinError %ld\n", GetLastError());
 #else
         const char *err = dlerror();
 
         if (err)
-            fprintf(stderr, "error while opening shared library: %s\n", err);
+            fprintf(stderr, "error while opening libc: %s\n", err);
         else
-            fprintf(stderr, "unknown error while opening shared library %s\n", libc_path);  // how
+            fprintf(stderr, "unknown error while opening libc\n");
 #endif
     }
 
