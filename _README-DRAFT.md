@@ -28,25 +28,7 @@ This project can be considered as a WSL1 alternative. However, it doesn't suppor
       - [ ] support for ELF shared objects
     - [ ] setup stack
 
-- [x] get a basic helloworld to run on Windows
-
-#### Short-term
-
-- [x] port to MinGW (WIP)
-
-#### Long-term
-
-* work on a Libc stub or replacement on Windows
-
-#### Optional
-
-- [x] support for 32-bit x86 machines
-- [x] support macOS
-- [ ] support Android (Termux)
-
-#### Need help
-
-* ARM/ARM64 support (lacking of device to test)
+- [ ] basic Libc implementation
 
 ## Usage
 
